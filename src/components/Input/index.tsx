@@ -1,7 +1,7 @@
 import React, { forwardRef } from "react";
 
 import { View, Text, TextInput, TextInputProps, TouchableOpacity } from 'react-native';
-import { styles } from "./styles";
+import { styles } from "@/components/Input/styles";
 import { MaterialIcons, FontAwesome, Octicons } from '@expo/vector-icons';
 
 type IconComponent = React.ComponentType<React.ComponentProps<typeof MaterialIcons>> |
@@ -18,7 +18,7 @@ type Props = TextInputProps & {
     onIconRIghtPress?: () => void
 }
 
-export const Input = forwardRef((Props: Props) => {
+export const Input = forwardRef((Props: Props, ref) => {
     const { IconLeft, IconRight, IconLeftName, IconRightName, title, onIconLeftPress, onIconRIghtPress, ...rest } = Props
 
     const calculateSizeWidth =()=>{

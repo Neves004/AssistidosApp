@@ -1,6 +1,6 @@
 import React from  'react-native';
 import { TouchableHighlightProps, TouchableOpacity , Text, ActivityIndicator} from "react-native";
-import { styles } from "./styles"
+import { styles } from "@/components/Button/styles"
 
 type Props = TouchableHighlightProps &{
     text:string,

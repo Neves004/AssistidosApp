@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { Text, View, Image, Alert } from 'react-native';
-import { styles } from './styles';
-import Logo from '../../assets/logo.png';
+import { styles } from '@/pages/login/styles';
+import Logo from '@/assets/logo.png';
 import { MaterialIcons, Octicons } from '@expo/vector-icons';
-import { Input } from '../../components/Input';
-import { Button } from '../../components/Button';
+import { Input } from '@/components/Input';
+import { Button } from '@/components/Button';
+import { useNavigation , NavigationProp} from '@react-navigation/native'
 
 export default function Login() {
+    
+    const navigation = useNavigation<NavigationProp<any>>();
+    
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(true);
@@ -17,9 +21,7 @@ export default function Login() {
                 return Alert.alert('Atenção', 'Informe os campos obrigatórios!')
             }
 
-            setTimeout(() => {
-                Alert.alert('Logado com sucesso')
-            }, 300)
+            navigation.reset({routes:[{name:"BottomRoutes"}]})
 
         } catch (error) {
             console.log(error)
