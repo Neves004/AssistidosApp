@@ -1,12 +1,19 @@
 import React from "react";
 import { Text, TouchableOpacity, View } from 'react-native';
 import { styles } from '@/pages/home/styles';
-import { Button } from "@/components/Button";
+import { Input } from "@/components/Input";
+import { Feather } from '@expo/vector-icons';
+import { themes } from "@/global/themes";
+import { Modal } from "@/components/Modal";
+
 
 export default function Home() {
     async function newTitle() {
+    }
 
-//        fetch()
+
+    async function addFilter() {
+    
     }
 
     return (
@@ -15,18 +22,33 @@ export default function Home() {
             <View style={styles.boxTop}>
                 <View style={styles.initial}>
                     <Text style={styles.text}>
-                        Último Assistidos
+                        Já Assistidos
                     </Text>
 
-                    <Button text='+' onPress={() => newTitle()} />
+                    <TouchableOpacity activeOpacity={0.7} style={styles.buttonNew} onPress={() => newTitle()}>
+                        <Text style={styles.titleButtonNew}>+</Text>
+                    </TouchableOpacity>
 
                 </View>
 
             </View>
 
             <View style={styles.boxMiddle}>
+                <View style={styles.inputZone}>
 
+                    <Input 
+                    titleInput="Pesquisa por títulos, gêneros, datas ou notas..." 
+                    IconLeft={Feather}
+                    IconLeftName="search"/>
 
+                    <TouchableOpacity activeOpacity={0.6} style={styles.buttonFilter} onPress={() => addFilter()}>
+                        <Feather
+                            name='filter'
+                            style={styles.filter} />
+
+                    </TouchableOpacity>
+                </View>
+                
             </View>
 
             <View style={styles.boxBottom}>
