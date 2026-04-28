@@ -4,13 +4,14 @@ import { themes } from '../../global/themes';
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: 'flex-start',
+        marginTop: 110,
+        verticalAlign: 'top',
+        display: 'flex',
         backgroundColor: '#1f2937',
     },
 
     boxTop: {
-        height: Dimensions.get('window').height / 10,
         width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
@@ -49,11 +50,12 @@ export const styles = StyleSheet.create({
     },
 
     boxMiddle: {
-        height: Dimensions.get('window').height / 15,
+        //height: Dimensions.get('window').height / 15,
         width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 10,
+        
     },
 
     inputZone: {
@@ -82,14 +84,17 @@ export const styles = StyleSheet.create({
         marginTop: 10,
     },
 
+    modal:{
+        height: '80%',
+        width: '100%',
+    },
+
     boxBottom: {
-        height: Dimensions.get('window').height / 2,
         width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 10,
         display: 'flex',
-        backgroundColor: 'green',
-
+        flex: 1
     },
 })

@@ -36,7 +36,7 @@ export default function Login() {
                     style={styles.logo}
                     resizeMode='contain'
                 />
-                <Text style={styles.text}> Bem Vindo de Volta!!!</Text>
+                <Text style={styles.text}> Bem-Vindo de Volta!!!</Text>
             </View>
 
             <View style={styles.boxMid}>

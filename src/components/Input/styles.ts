@@ -4,7 +4,7 @@ export const styles = StyleSheet.create({
         
     titleInput: {
         marginLeft: 5,
-        marginTop: 20,
+        marginTop: 15,
         fontSize: 15,
         color:'#9ca3af',
     },

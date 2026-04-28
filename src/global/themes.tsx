@@ -8,3 +8,5 @@ export const themes ={
         personalized: '#0097b2'
     }
 }
+
+export type TipoMidia = "Filme" | "Anime" | "Série"
