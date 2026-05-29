@@ -13,6 +13,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { Alert } from 'react-native';
 import { TipoMidia } from '@/global/themes';
 import { MediaTypeSelector } from '@/components/MediaTypeSelector';
+import { v4 as uuidv4 } from 'uuid';
+import { useCards } from '@/context/cards.context';
 
 type RootStackParamList = {
 
@@ -46,6 +48,8 @@ export default function NewTitle() {
             editItem?.tipo || 'Filme'
         );
     const navigation = useNavigation<NavigationProp>();
+
+    const { addCard, updateCard } = useCards();
 
     async function pickImage() {
         const permission =
@@ -89,6 +93,7 @@ export default function NewTitle() {
 
         if (
             type !== 'Filme' &&
+            endDate &&
             endDate.length !== 10
         ) {
             return Alert.alert(
@@ -98,7 +103,7 @@ export default function NewTitle() {
         }
 
         const newCard: CardType = {
-            id: editItem?.id || String(Date.now()),
+            id: editItem?.id || uuidv4(),
             capa: image,
             titulo: title,
             genero: genre,
@@ -112,12 +117,13 @@ export default function NewTitle() {
             comentario: comment,
         };
 
-        navigation.navigate('BottomRoutes', {
-            screen: 'Home',
-            params: {
-                newItem: newCard,
-            },
-        });
+        if (isEditing) {
+            updateCard(newCard);
+        } else {
+            addCard(newCard);
+        }
+
+        navigation.goBack();
     }
 
     function formatDate(text: string) {
@@ -135,14 +141,17 @@ export default function NewTitle() {
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={20}
         >
             <ScrollView
                 contentContainerStyle={{
                     paddingBottom: 60,
+                    flexGrow: 1,
                 }}
                 showsVerticalScrollIndicator={false}
-                keyboardShouldPersistTaps="handled">
+                keyboardShouldPersistTaps="handled"
+            >
 
                 <View style={styles.container}>
 

@@ -4,7 +4,8 @@ export const styles = StyleSheet.create({
     card: {
         flex: 1,
         width: 350,
-        borderColor: '#0097b2',
+        // borderColor: '#0097b2',
+        borderColor: '#575c93',
         borderWidth: 1,
         borderStyle: 'solid',
         flexDirection: 'row',
@@ -13,6 +14,21 @@ export const styles = StyleSheet.create({
         borderRadius: 8,
         alignSelf: 'flex-start',
         marginLeft: -12,
+        gap: 10,
+    },
+
+
+    title: {
+        color: '#0097b2',
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+
+    genre: {
+        color: '#9ca3af',
+        fontStyle: 'italic',
+        fontSize: 15,
+        alignSelf: 'center'
     },
 
     textCard: {
@@ -32,6 +48,25 @@ export const styles = StyleSheet.create({
         display: 'flex',
         columnGap: 5,
         flexShrink: 1,
+        marginTop:10
+    },
+
+    typeBadge: {
+        marginLeft: 'auto',
+        backgroundColor: '#0097b220',
+        borderWidth: 1,
+        borderColor: '#0097b2',
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 7,
+        alignSelf: 'flex-start',
+        
+    },
+
+    typeText: {
+        color: '#0097b2',
+        fontSize: 12,
+        fontWeight: '600',
     },
 
     middleCard: {
@@ -39,6 +74,21 @@ export const styles = StyleSheet.create({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        marginTop: 6,
+        gap: 4,
+
+    },
+
+    ratingContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+    },
+
+    comment: {
+        color: '#9ca3af',
+        fontSize: 13,
+        marginTop: 6,
     },
 
     bottomCard: {
@@ -47,7 +97,9 @@ export const styles = StyleSheet.create({
 
     actions: {
         flexDirection: 'row',
-        gap: 18,
-        marginTop: 14,
+        justifyContent: 'flex-end',
+        gap: 14,
+        marginTop: 45,
+        marginRight: -25
     },
 })

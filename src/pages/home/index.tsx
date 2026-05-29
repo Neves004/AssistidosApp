@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FlatList, Text, TouchableOpacity, View, Modal, Pressable } from 'react-native';
 import { styles } from '@/pages/home/styles';
 import { Input } from "@/components/Input";
 import { Feather, Octicons } from '@expo/vector-icons';
-import { themes } from "@/global/themes";
 import { Card, CardType } from '@/components/Card';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useRoute } from '@react-navigation/native';
 import { TipoMidia } from "@/global/themes";
+import { useCards } from '@/context/cards.context';
 
 // type tmdbType = {
 //     poster_path: string;
@@ -16,9 +16,7 @@ import { TipoMidia } from "@/global/themes";
 
 export default function Home() {
     const [open, setOpen] = useState<boolean>(false);
-    const [data, setData] = useState<CardType[]>([]);
-
-    const route = useRoute<any>();
+    const { cards, deleteCard } = useCards();
 
     const [filterType, setFilterType] =
         useState<TipoMidia | 'Todos'>('Todos');
@@ -30,33 +28,6 @@ export default function Home() {
             'highest' |
             'lowest'
         >('recent');
-
-    useEffect(() => {
-        if (route.params?.newItem) {
-            const exists = data.find(
-                item => item.id === route.params.newItem.id
-            );
-
-            if (exists) {
-                const updated =
-                    data.map((item) => {
-
-                        if (item.id === route.params.newItem.id) {
-                            return route.params.newItem;
-                        }
-
-                        return item;
-                    });
-                setData(updated);
-            } else {
-                setData((oldData) => [
-                    route.params.newItem,
-                    ...oldData
-                ]);
-            }
-        }
-
-    }, [route.params?.newItem]);
 
 
     // async function buscarPosters(query: string) {
@@ -104,9 +75,7 @@ export default function Home() {
     const navigation = useNavigation<NavigationProp>();
 
     function handleDelete(id: string) {
-        const filtered =
-            data.filter((item) => item.id !== id);
-        setData(filtered);
+        deleteCard(id);
     }
 
     function handleEdit(item: CardType) {
@@ -116,7 +85,7 @@ export default function Home() {
     }
 
     {/* FILTROS */ }
-    const filteredData = data
+    const filteredData = cards
 
         .filter((item) => {
             if (filterType === 'Todos') {
@@ -199,8 +168,11 @@ export default function Home() {
                 <FlatList
                     data={filteredData}
                     style={{ marginTop: 40, paddingHorizontal: 30 }}
-                    keyExtractor={(item, index) => item.id}
-                    renderItem={({ item, index }) => {
+                    keyExtractor={(item) => item.id}
+                    ItemSeparatorComponent={() => (
+                        <View style={{ height: 16 }} />
+                    )}
+                    renderItem={({ item }) => {
                         return (<Card card={item}
                             onDelete={() => handleDelete(item.id)}
                             onEdit={() => handleEdit(item)}>
@@ -284,7 +256,7 @@ export default function Home() {
                                 </Text>
                             </TouchableOpacity>
 
-                             {/* MENOS RECENTE */}
+                            {/* MENOS RECENTE */}
                             <TouchableOpacity
                                 style={[
                                     styles.orderButton,
@@ -306,8 +278,8 @@ export default function Home() {
                                 </Text>
                             </TouchableOpacity>
 
-                             {/* MAIOR NOTA */}
-                           <TouchableOpacity
+                            {/* MAIOR NOTA */}
+                            <TouchableOpacity
                                 style={[
                                     styles.orderButton,
 
@@ -327,9 +299,9 @@ export default function Home() {
                                     Maior nota
                                 </Text>
                             </TouchableOpacity>
-                             
-                             {/* MENOR NOTA */}
-                           <TouchableOpacity
+
+                            {/* MENOR NOTA */}
+                            <TouchableOpacity
                                 style={[
                                     styles.orderButton,
 

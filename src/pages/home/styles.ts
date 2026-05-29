@@ -95,7 +95,7 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         marginTop: 10,
         display: 'flex',
-        flex: 1
+        flex: 1,
     },
 
     //Modal
