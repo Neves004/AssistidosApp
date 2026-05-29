@@ -58,62 +58,68 @@ export function Card({ card, onDelete, onEdit }: Props) {
 
     }
 
-    return (
-        <TouchableOpacity activeOpacity={0.4}>
-            <View style={styles.card}>
+        return (
+            <TouchableOpacity activeOpacity={0.4}>
+                <View style={styles.card}>
 
-                <View>
-                    <Image
-                        source={{ uri: card.capa }}
-                        style={styles.capa}
-                    />
-
-                </View>
-
-                <View style={{}}>
-
-                    <View style={styles.topCard}>
-                        <Text style={{ color: '#0097b2', fontSize: 20, }}>{card.titulo}</Text>
-                        <Text style={{ fontStyle: 'italic', color: '#9ca3af', fontSize: 15, alignSelf: 'center' }}>{card.genero}</Text>
-
-                    </View>
-                    <View style={styles.middleCard}>
-                        <Text style={styles.textCard}>{card.nota}/5 </Text>
-                        <Text style={{ color: '#fbbf24', fontSize: 14 }}> {estrelas(card.nota)} </Text>
-                        <Text style={styles.textCard}> {dataFormatada(card.data)} </Text>
-                    </View>
-
-                    <View style={styles.bottomCard}>
-                        <Text style={styles.textCard}> {card.comentario}</Text>
-                    </View>
-                </View>
-
-                <View style={styles.actions}>
-                    <TouchableOpacity
-                        activeOpacity={0.7}
-                        onPress={onEdit}
-                    >
-                        <MaterialIcons
-                            name="edit"
-                            size={22}
-                            color="#38bdf8"
+                    <View>
+                        <Image
+                            source={{ uri: card.capa }}
+                            style={styles.capa}
                         />
-                    </TouchableOpacity>
 
-                    <TouchableOpacity
-                        activeOpacity={0.7}
-                        onPress={onDelete}
-                    >
-                        <MaterialIcons
-                            name="delete"
-                            size={22}
-                            color="#ef4444"
-                        />
-                    </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.content}>
+
+                        <View style={styles.topCard}>
+                            <Text style={{ color: '#0097b2', fontSize: 20, }}>{card.titulo}</Text>
+                            <Text style={{ fontStyle: 'italic', color: '#9ca3af', fontSize: 15, alignSelf: 'center' }}>{card.genero}</Text>
+
+                        </View>
+                        <View style={styles.middleCard}>
+                            <Text style={styles.textCard}>{card.nota}/5 </Text>
+                            <Text style={{ color: '#fbbf24', fontSize: 14 }}> {estrelas(card.nota)} </Text>
+                            <Text style={styles.textCard}>
+                                {
+                                    card.tipo === 'Filme'
+                                        ? card.dataInicial
+                                        : `${card.dataInicial} - ${card.dataFinal}`
+                                }
+                            </Text>
+                        </View>
+
+                        <View style={styles.bottomCard}>
+                            <Text style={styles.textCard}> {card.comentario}</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.actions}>
+                        <TouchableOpacity
+                            activeOpacity={0.7}
+                            onPress={onEdit}
+                        >
+                            <MaterialIcons
+                                name="edit"
+                                size={22}
+                                color="#38bdf8"
+                            />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            activeOpacity={0.7}
+                            onPress={onDelete}
+                        >
+                            <MaterialIcons
+                                name="delete"
+                                size={22}
+                                color="#ef4444"
+                            />
+                        </TouchableOpacity>
+
+                    </View>
 
                 </View>
-
-            </View>
-        </TouchableOpacity>
-    );
-}
+            </TouchableOpacity>
+        );
+    }
