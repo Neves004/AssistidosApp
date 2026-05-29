@@ -64,7 +64,7 @@ export default function Login() {
                 <Button text='ENTRAR' onPress={()=>getLogin()}
                 />
 
-                <Text style={styles.textBottom}> Não tem conta? <Text style={{ color: '#a839ba' }}> Crie aqui </Text> </Text>
+                <Text style={styles.textBottom}> Não tem conta? <Text style={{ color: '#a839ba' }} onPress={() => navigation.navigate('Register')}> Crie aqui </Text> </Text>
 
             </View>
         </View>

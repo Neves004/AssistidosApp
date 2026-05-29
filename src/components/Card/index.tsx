@@ -2,7 +2,7 @@ import { TouchableOpacity, TouchableOpacityProps, Text, View } from "react-nativ
 import { styles } from "@/components/Card/styles";
 import { MaterialIcons, Octicons } from '@expo/vector-icons';
 import { TipoMidia } from "@/global/themes";
-
+import { Image } from 'react-native';
 
 type Props = TouchableOpacityProps & {
     card: CardType;
@@ -10,23 +10,21 @@ type Props = TouchableOpacityProps & {
     onEdit: () => void;
 }
 
-
 export type CardType = {
     id: string,
     capa: string,
     titulo: string,
     genero: string,
     nota: number,
-    data: string, //formatado estilo iso YYYY-MM-DDT00:00:00.0000Z
+    dataInicial: string,
+    dataFinal?: string,
     tipo: TipoMidia,
     comentario: string,
 }
 
-
-
 export function Card({ card, onDelete, onEdit }: Props) {
 
-    async function estrelas(nota: number) {
+    function estrelas(nota: number) {
         switch (nota) {
             case 1:
                 return <Text> ★✩✩✩✩ </Text>;
@@ -48,7 +46,7 @@ export function Card({ card, onDelete, onEdit }: Props) {
         }
     }
 
-    async function dataFormatada(data: string) {
+    function dataFormatada(data: string) {
         const limitado = data.slice(0, 8);
 
         // Aplica a formatação
@@ -65,9 +63,10 @@ export function Card({ card, onDelete, onEdit }: Props) {
             <View style={styles.card}>
 
                 <View>
-                    <View style={styles.capa}>
-
-                    </View>
+                    <Image
+                        source={{ uri: card.capa }}
+                        style={styles.capa}
+                    />
 
                 </View>
 
@@ -78,7 +77,6 @@ export function Card({ card, onDelete, onEdit }: Props) {
                         <Text style={{ fontStyle: 'italic', color: '#9ca3af', fontSize: 15, alignSelf: 'center' }}>{card.genero}</Text>
 
                     </View>
-
                     <View style={styles.middleCard}>
                         <Text style={styles.textCard}>{card.nota}/5 </Text>
                         <Text style={{ color: '#fbbf24', fontSize: 14 }}> {estrelas(card.nota)} </Text>
@@ -88,6 +86,31 @@ export function Card({ card, onDelete, onEdit }: Props) {
                     <View style={styles.bottomCard}>
                         <Text style={styles.textCard}> {card.comentario}</Text>
                     </View>
+                </View>
+
+                <View style={styles.actions}>
+                    <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={onEdit}
+                    >
+                        <MaterialIcons
+                            name="edit"
+                            size={22}
+                            color="#38bdf8"
+                        />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={onDelete}
+                    >
+                        <MaterialIcons
+                            name="delete"
+                            size={22}
+                            color="#ef4444"
+                        />
+                    </TouchableOpacity>
+
                 </View>
 
             </View>

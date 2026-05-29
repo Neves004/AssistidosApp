@@ -2,7 +2,8 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import Login from "../pages/login";
 import BottomRoutes from "./bottom.routes";
-import newTitle from "@/pages/newTitle";
+import NewTitle from "@/pages/newTitle";
+import Register from "@/pages/register";
 
 export default function Routes() {
     const Stack = createStackNavigator()
@@ -18,6 +19,11 @@ export default function Routes() {
             }}
         >
             <Stack.Screen
+                name='Register'
+                component={Register}
+            />
+
+            <Stack.Screen
                 name='Login'
                 component={Login}
             />
@@ -28,8 +34,8 @@ export default function Routes() {
             />
 
             <Stack.Screen
-                name='newTitle'
-                component={newTitle}
+                name='NewTitle'
+                component={NewTitle}
             />
 
         </Stack.Navigator>

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { FlatList, Text, TouchableOpacity, View, Modal, Pressable } from 'react-native';
 import { styles } from '@/pages/home/styles';
 import { Input } from "@/components/Input";
@@ -7,120 +7,159 @@ import { themes } from "@/global/themes";
 import { Card, CardType } from '@/components/Card';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useRoute } from '@react-navigation/native';
 
-import { useFocusEffect } from '@react-navigation/native';
-import { itemsStorage } from "@/storage/ItemStorage";
-
-
-type tmdbType = {
-    poster_path: string;
-}
+// type tmdbType = {
+//     poster_path: string;
+// }
 
 export default function Home() {
     const [open, setOpen] = useState<boolean>(false);
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<CardType[]>([]);
 
+    const route = useRoute<any>();
 
-    async function buscarPosters(query: string) {
-        const apiKey = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmODgxZTE4MWU4MDZhOTJiMjFlY2Y2NzE5ZDY2ZTBmNiIsIm5iZiI6MTc3NjI1ODAxOS44NDcwMDAxLCJzdWIiOiI2OWRmOGJlM2NjOGFhMWM1YjRiN2Y4YjciLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.es48orD0dJuZgdqDaLgENQvl_FAUmsGA6I83Q3BFtdc'; // Substitua pela sua chave do TMDB
-        const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}`;
+    useEffect(() => {
+        if (route.params?.newItem) {
+            const exists = data.find(
+                item => item.id === route.params.newItem.id
+            );
 
-        const options = {
-            method: 'GET',
-            headers: {
-                accept: 'application/json',
-                Authorization: `Bearer ${apiKey}`
+            if (exists) {
+                const updated =
+                    data.map((item) => {
+
+                        if (item.id === route.params.newItem.id) {
+                            return route.params.newItem;
+                        }
+
+                        return item;
+                    });
+                setData(updated);
+            } else {
+                setData((oldData) => [
+                    route.params.newItem,
+                    ...oldData
+                ]);
             }
-
-        };
-
-        try {
-            const response = await fetch(url, options);
-            if (!response.ok) {
-                throw new Error(`Erro na requisição: ${response.status}`);
-            }
-            const data = await response.json();
-
-
-            // Filtramos apenas os filmes que possuem poster e mapeamos para a URL completa
-            const posters = (data.results as tmdbType[])
-                .filter(movie => movie.poster_path !== null)
-                .map(movie => `https://image.tmdb.org/t/p/w500${movie.poster_path}`);
-
-            return posters;
-        } catch (error) {
-            console.error("Erro ao buscar filmes:", error);
-            return [];
         }
-    }
 
-    //Rota pra tela newTitle
-    type RootStackParamList = {
-        BottomRoutes: undefined;
-        newTitle: undefined;
+    }, [route.params?.newItem]);
+
+
+// async function buscarPosters(query: string) {
+//     const apiKey = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmODgxZTE4MWU4MDZhOTJiMjFlY2Y2NzE5ZDY2ZTBmNiIsIm5iZiI6MTc3NjI1ODAxOS44NDcwMDAxLCJzdWIiOiI2OWRmOGJlM2NjOGFhMWM1YjRiN2Y4YjciLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.es48orD0dJuZgdqDaLgENQvl_FAUmsGA6I83Q3BFtdc'; // Substitua pela sua chave do TMDB
+//     const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}`;
+
+//     const options = {
+//         method: 'GET',
+//         headers: {
+//             accept: 'application/json',
+//             Authorization: `Bearer ${apiKey}`
+//         }
+
+//     };
+
+//     try {
+//         const response = await fetch(url, options);
+//         if (!response.ok) {
+//             throw new Error(`Erro na requisição: ${response.status}`);
+//         }
+//         const data = await response.json();
+
+
+//         // Filtramos apenas os filmes que possuem poster e mapeamos para a URL completa
+//         const posters = (data.results as tmdbType[])
+//             .filter(movie => movie.poster_path !== null)
+//             .map(movie => `https://image.tmdb.org/t/p/w500${movie.poster_path}`);
+
+//         return posters;
+//     } catch (error) {
+//         console.error("Erro ao buscar filmes:", error);
+//         return [];
+//     }
+// }
+
+//Rota pra tela NewTitle
+type RootStackParamList = {
+    BottomRoutes: undefined;
+    NewTitle: {
+        editItem?: CardType;
     };
 
-    type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-    const navigation = useNavigation<NavigationProp>();
+};
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+const navigation = useNavigation<NavigationProp>();
 
-    return (
-        <View style={styles.container}>
-            <View style={styles.boxTop}>
-                <View style={styles.initial}>
-                    <Text style={styles.text}>
-                        Já Assistidos
-                    </Text>
+function handleDelete(id: string) {
+    const filtered =
+        data.filter((item) => item.id !== id);
+    setData(filtered);
+}
 
-                    <TouchableOpacity activeOpacity={0.7} style={styles.buttonNew} onPress={() => navigation.navigate('newTitle')}>
-                        <Text style={styles.titleButtonNew}>+</Text>
-                    </TouchableOpacity>
+function handleEdit(item: CardType) {
+    navigation.navigate('NewTitle', {
+        editItem: item
+    });
+}
 
-                </View>
+return (
+    <View style={styles.container}>
+        <View style={styles.boxTop}>
+            <View style={styles.initial}>
+                <Text style={styles.text}>
+                    Já Assistidos
+                </Text>
 
-            </View>
-
-            <View style={styles.boxMiddle}>
-                <View style={styles.inputZone}>
-
-                    <Input
-                        titleInput="Pesquisa por títulos, gêneros, datas ou notas..."
-                        IconLeft={Octicons}
-                        IconLeftName="search" />
-
-                    <TouchableOpacity activeOpacity={0.6} style={styles.buttonFilter} onPress={() => setOpen(!open)}>
-                        <Feather
-                            name='filter'
-                            style={styles.filter} />
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-
-            <View style={styles.boxBottom}>
-                <FlatList
-                    data={data}
-                    style={{ marginTop: 40, paddingHorizontal: 30 }}
-                    keyExtractor={(item, index) => item.id}
-                    renderItem={({ item, index }) => {
-                        return (<Card card={item} onDelete={() => { }} onEdit={() => { }}></Card>)
-                    }}
-                />
-
+                <TouchableOpacity activeOpacity={0.7} style={styles.buttonNew} onPress={() => navigation.navigate('NewTitle')}>
+                    <Text style={styles.titleButtonNew}>+</Text>
+                </TouchableOpacity>
 
             </View>
-
-            <Modal visible={open} style={{ backgroundColor: '#000a' }} transparent animationType="fade">
-                <Pressable style={{ backgroundColor: '#000a', flex: 1 }} onPress={() => setOpen(false)}>
-                    <View style={{ backgroundColor: '#fff', flex: 1, maxHeight: '50%', borderTopLeftRadius: 16, borderTopRightRadius: 16, marginTop: 'auto' }}>
-
-                    </View>
-                </Pressable>
-
-            </Modal>
-
 
         </View>
 
+        <View style={styles.boxMiddle}>
+            <View style={styles.inputZone}>
 
-    )
+                <Input
+                    titleInput="Pesquisa por títulos, gêneros, datas ou notas..."
+                    IconLeft={Octicons}
+                    IconLeftName="search" />
+
+                <TouchableOpacity activeOpacity={0.6} style={styles.buttonFilter} onPress={() => setOpen(!open)}>
+                    <Feather
+                        name='filter'
+                        style={styles.filter} />
+                </TouchableOpacity>
+            </View>
+        </View>
+
+
+        <View style={styles.boxBottom}>
+            <FlatList
+                data={data}
+                style={{ marginTop: 40, paddingHorizontal: 30 }}
+                keyExtractor={(item, index) => item.id}
+                renderItem={({ item, index }) => {
+                    return (<Card card={item}
+                        onDelete={() => handleDelete(item.id)}
+                        onEdit={() => handleEdit(item)}>
+                    </Card>)
+                }}
+            />
+        </View>
+
+        <Modal visible={open} style={{ backgroundColor: '#000a' }} transparent animationType="fade">
+            <Pressable style={{ backgroundColor: '#000a', flex: 1 }} onPress={() => setOpen(false)}></Pressable>
+            <View style={{ backgroundColor: '#fff', flex: 1, maxHeight: '50%', borderTopLeftRadius: 16, borderTopRightRadius: 16, marginTop: 'auto' }}>
+                <Text> Filtrar e ordenar por:</Text>
+            </View>
+        </Modal>
+
+
+    </View>
+
+
+)
 }

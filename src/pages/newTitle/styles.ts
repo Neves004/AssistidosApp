@@ -3,29 +3,39 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-        padding: 30,
+        backgroundColor: '#1f2937',
+        paddingHorizontal: 28,
+        paddingTop: 60,
     },
 
     buttonArrow: {
-        width: 40,
-        height: 40,
-        backgroundColor: '#e2e0dc',
-        borderRadius: 5,
-        marginTop: 0,
-        marginBottom: 70,
+        width: 45,
+        height: 45,
+        backgroundColor: '#0097b2',
+        borderRadius: 14,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 24,
     },
 
     arrow: {
-        // marginLeft: 'auto',
-        // marginRight: 'auto',
-        // marginBottom: 'auto',
-        // marginTop: 'auto',
-        // color: '#6d6f73',
-        // // fontSize: 25,
-        // // borderRadius: 5,
-        // // borderColor: '#cfccc5',
+        color: '#d1d5db',
+        fontSize: 26,
+    },
+
+    title: {
+        color: '#9ca3af',
+        fontSize: 28,
+        fontWeight: 'bold',
+        alignSelf: 'center',
+    },
+
+    subTitle: {
+        color: '#6b7280',
+        fontSize: 14,
+        marginTop: 6,
+        marginBottom: 30,
+        alignSelf: 'center',
     },
 
     texts: {
@@ -35,53 +45,61 @@ export const styles = StyleSheet.create({
         marginBottom: -8
     },
 
-
-
     capaBox: {
-        flexDirection: 'row',
-        columnGap: 2,
-        padding: 30,
-
-    },
-
-    caixaCapa: {
         width: '100%',
-        height: 40,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginTop: 10,
+        gap: 10,
+    },
+
+    imagePicker: {
+        width: '100%',
+        height: 78,
+        backgroundColor: '#111827',
+        borderRadius: 18,
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 18,
+        marginTop: 10,
         borderWidth: 1,
-        borderRadius: 5,
-        marginTop: 10,
-        backgroundColor: '#e2e0dc',
-        borderColor: '#cfccc5',
-        color: '#6d6f73',
-        alignSelf: 'center',
-        fontSize: 15,
-        padding: 9,
+        borderColor: '#374151',
     },
 
-    buttonCapa: {
-        width: 80,
-        height: 40,
-        backgroundColor: '#e2e0dc',
-        borderRadius: 5,
-        marginTop: 10,
+    iconBox: {
+        width: 52,
+        height: 52,
+        borderRadius: 14,
+        backgroundColor: '#1f2937',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 
+    textImageBox: {
+        flex: 1,
+        marginLeft: 14,
+    },
 
-    titleButtonNew: {
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        marginBottom: 'auto',
-        marginTop: 'auto',
-        color: '#6d6f73',
-        fontSize: 15,
-        borderRadius: 5,
-        borderColor: '#cfccc5',
+    imageTitle: {
+        color: '#f3f4f6',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+
+    imageSubTitle: {
+        color: '#9ca3af',
+        fontSize: 13,
+        marginTop: 2,
     },
 
     buttonAdd: {
-        width: 130,
-        height: 50,
+        width: 150,
+        height: 55,
         alignSelf: 'center',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
         backgroundColor: '#0097b2',
         borderRadius: 40,
         shadowColor: "#1d034d",
@@ -92,10 +110,11 @@ export const styles = StyleSheet.create({
         shadowOpacity: 0.27,
         shadowRadius: 4.65,
         elevation: 6,
+        gap: 5,
     },
 
     titleButtonAdd: {
-        fontSize: 16,
+        fontSize: 18,
         color: '#ffff',
         fontWeight: 'bold',
         alignSelf: 'center',

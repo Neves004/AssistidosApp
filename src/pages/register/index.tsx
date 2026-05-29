@@ -1,0 +1,131 @@
+import React, { useState } from 'react';
+import { Alert, Image, Text, View } from 'react-native';
+import { styles } from '@/pages/register/styles';
+import Logo from '@/assets/logo.png';
+
+import { MaterialIcons, Octicons, FontAwesome } from '@expo/vector-icons';
+
+import { Input } from '@/components/Input';
+import { Button } from '@/components/Button';
+
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+
+export default function Register() {
+
+    const navigation = useNavigation<NavigationProp<any>>();
+
+    const [user, setUser] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
+    const [showPassword, setShowPassword] = useState(true);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(true);
+
+    async function handleRegister() {
+
+        try {
+
+            if (!user || !email || !password || !confirmPassword) {
+                return Alert.alert('Atenção', 'Preencha todos os campos!');
+            }
+
+            if (password !== confirmPassword) {
+                return Alert.alert('Atenção', 'As senhas não coincidem!');
+            }
+
+            Alert.alert('Sucesso', 'Conta criada com sucesso!');
+
+            navigation.navigate('Login');
+
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
+    return (
+        <View style={styles.container}>
+
+            <View style={styles.boxTop}>
+                <Image
+                    source={Logo}
+                    style={styles.logo}
+                    resizeMode='contain'
+                />
+
+                <Text style={styles.text}>
+                    Crie sua conta
+                </Text>
+
+                <Text style={styles.subText}>
+                    Preencha os dados abaixo para continuar
+                </Text>
+
+
+            </View>
+
+            <View style={styles.boxMid}>
+
+                <Input
+                    value={user}
+                    onChangeText={setUser}
+                    title='NOME DE USUÁRIO:'
+                    IconRight={FontAwesome}
+                    IconRightName='user'
+                />
+
+                <Input
+                    value={email}
+                    onChangeText={setEmail}
+                    title='ENDEREÇO DE E-MAIL:'
+                    IconRight={MaterialIcons}
+                    IconRightName='email'
+                />
+
+                <Input
+                    value={password}
+                    onChangeText={setPassword}
+                    title='SENHA:'
+                    IconRight={Octicons}
+                    IconRightName={showPassword ? 'eye-closed' : 'eye'}
+                    secureTextEntry={showPassword}
+                    onIconRIghtPress={() => setShowPassword(!showPassword)}
+                />
+
+                <Input
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                    title='CONFIRMAR SENHA:'
+                    IconRight={Octicons}
+                    IconRightName={showConfirmPassword ? 'eye-closed' : 'eye'}
+                    secureTextEntry={showConfirmPassword}
+                    onIconRIghtPress={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                    }
+                />
+
+            </View>
+
+            <View style={styles.boxBottom}>
+
+                <Button
+                    text='CRIAR CONTA'
+                    onPress={() => handleRegister()}
+                />
+
+                <Text style={styles.textBottom}>
+                    Já possui conta?
+                    <Text
+                        style={{ color: '#a839ba' }}
+                        onPress={() => navigation.navigate('Login')}
+                    >
+                        {' '}Entrar
+                    </Text>
+                </Text>
+
+            </View>
+
+        </View>
+    )
+}

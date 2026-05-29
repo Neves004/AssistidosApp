@@ -4,16 +4,15 @@ export const styles = StyleSheet.create({
     card: {
         flex: 1,
         width: 350,
-        borderColor: '#1800ad',
+        borderColor: '#0097b2',
         borderWidth: 1,
         borderStyle: 'solid',
         flexDirection: 'row',
         columnGap: 10,
-        backgroundColor: 'green',
         padding: 8,
         borderRadius: 8,
         alignSelf: 'flex-start',
-        marginLeft:-12,
+        marginLeft: -12,
     },
 
     textCard: {
@@ -25,7 +24,6 @@ export const styles = StyleSheet.create({
     capa: {
         width: 100,
         height: 150,
-        backgroundColor: 'red',
         borderRadius: 5,
     },
 
@@ -43,7 +41,13 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
     },
 
-    bottomCard:{
-        flexShrink:1,
+    bottomCard: {
+        flexShrink: 1,
+    },
+
+    actions: {
+        flexDirection: 'row',
+        gap: 18,
+        marginTop: 14,
     },
 })
