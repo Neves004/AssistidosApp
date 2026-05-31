@@ -47,7 +47,7 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         display: 'flex',
         columnGap: 5,
-        flexShrink: 1,
+        flex:1,
         marginTop:10
     },
 
@@ -72,11 +72,16 @@ export const styles = StyleSheet.create({
     middleCard: {
         flexDirection: 'row',
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         marginTop: 6,
         gap: 4,
 
+    },
+
+    textData: {
+        color: '#9ca3af',
+        fontSize: 12,
+        fontStyle:'italic',
+        flexShrink: 1,
     },
 
     ratingContainer: {
@@ -99,7 +104,7 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-end',
         gap: 14,
-        marginTop: 45,
-        marginRight: -25
+        marginTop: 30,
+        marginRight: 10,
     },
 })

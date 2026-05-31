@@ -70,7 +70,7 @@ export function Card({ card, onDelete, onEdit }: Props) {
                 />
 
                 {/* CONTEÚDO */}
-                <View>
+                <View style={{ flex: 1 }}>
 
                     {/* topo */}
                     <View style={styles.topCard}>
@@ -85,18 +85,12 @@ export function Card({ card, onDelete, onEdit }: Props) {
                     {/* meio */}
                     <View style={styles.middleCard}>
 
-                        <View
-                            style={{
-                                alignItems: 'flex-start',
-                                gap: 2,
-                            }}
-                        >
-
+                        <View style={{gap: 2,}}>
                             {/* PRIMEIRA LINHA */}
                             <View
                                 style={{
                                     flexDirection: 'row',
-                                    alignItems: 'center',
+                                    justifyContent: 'flex-start',
                                     gap: 4,
                                 }}
                             >
@@ -108,20 +102,13 @@ export function Card({ card, onDelete, onEdit }: Props) {
                                     {estrelas(card.nota)}
                                 </Text>
 
-                                <Text style={styles.textCard}>
-                                    {card.dataInicial}
-                                </Text>
                             </View>
 
                             {/* SEGUNDA LINHA */}
-                            {card.dataFinal && (
-                                <Text style={styles.textCard}>
-                                    Fim: {card.dataFinal}
-                                </Text>
-                            )}
-
+                            <Text style={styles.textData}>
+                                {card.dataInicial} {card.dataFinal ? `— ${card.dataFinal}` : ''}
+                            </Text>
                         </View>
-
                     </View>
 
                     {/* comentário */}
