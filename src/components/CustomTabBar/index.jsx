@@ -4,7 +4,6 @@ import { Text, TouchableOpacity, View, Image } from 'react-native';
 import { styles } from "@/components/CustomTabBar/styles";
 import { themes } from "@/global/themes";
 import Assistidos from '@/assets/assistidos.png';
-import { colors } from "@/themes/colors";
 
 import { MaterialIcons, FontAwesome, AntDesign } from '@expo/vector-icons';
 
