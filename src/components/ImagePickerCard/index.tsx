@@ -3,6 +3,7 @@ import { Text, TouchableOpacity, View, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { styles } from '@/components/ImagePickerCard/styles';
+import { themes } from '@/global/themes';
 
 type Props = {
     image?: string;
@@ -37,7 +38,7 @@ export function ImagePickerCard({
                         <Ionicons
                             name='image-outline'
                             size={30}
-                            color='#00bcd4'
+                            color= {themes.tema}
                         />
 
                 }

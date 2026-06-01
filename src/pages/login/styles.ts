@@ -1,13 +1,12 @@
 import { Dimensions, StyleSheet } from 'react-native';
-import { colors } from '@/themes/colors';
-import { background } from '@expo/ui/jetpack-compose';
+import { themes } from "@/global/themes";
 
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: colors.background,
+        backgroundColor: themes.background,
     },
 
     boxTop: {

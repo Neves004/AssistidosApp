@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors } from '@/themes/colors';
+import { themes } from "@/global/themes";
 
 export const styles = StyleSheet.create({
 
@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         marginTop: 130,
-        backgroundColor: colors.background,
+        backgroundColor: themes.background,
     },
 
     avatar: {
@@ -16,8 +16,10 @@ export const styles = StyleSheet.create({
         height: 80,
         borderRadius: 60,
         borderWidth: 3,
-        borderColor: "#fff",
+        // borderColor: "#fff",
+        borderColor: themes.tema,
         alignSelf: 'center',
+
     },
 
     box: {
@@ -29,14 +31,14 @@ export const styles = StyleSheet.create({
     },
 
     user: {
-        color: colors.text,
+        color: themes.text,
         alignSelf: 'center',
         fontSize: 22,
         marginBottom: 15,
     },
 
     title: {
-        color: colors.text,
+        color: themes.text,
         alignSelf: 'center',
         fontSize: 20,
         marginTop: 10,
@@ -53,11 +55,11 @@ export const styles = StyleSheet.create({
     },
 
     tituloH: {
-        backgroundColor: colors.tema,
+        backgroundColor: themes.tema,
         width: 65,
         height: 25,
         borderRadius: 2,
-        color: colors.text,
+        color: themes.text,
         fontSize: 15,
         alignSelf: 'center',
         textAlign: 'center',
@@ -66,14 +68,14 @@ export const styles = StyleSheet.create({
     },
 
     tituloText: {
-        color: colors.text,
+        color: themes.text,
         fontSize: 12,
         alignSelf: 'center',
         marginTop: 2,
     },
 
     title2: {
-        color: colors.text,
+        color: themes.text,
         alignSelf: 'center',
         fontSize: 20,
         marginBottom: 15,
@@ -85,11 +87,11 @@ export const styles = StyleSheet.create({
     },
 
     tituloD: {
-        backgroundColor: colors.tema,
+        backgroundColor: themes.tema,
         width: 65,
         height: 30,
         borderRadius: 2,
-        color: colors.text,
+        color: themes.text,
         fontSize: 20,
         textAlignVertical: 'center',
         marginTop: 10,
@@ -97,7 +99,7 @@ export const styles = StyleSheet.create({
     },
 
     text: {
-        color: colors.text,
+        color: themes.text,
         fontSize: 18,
     },
 

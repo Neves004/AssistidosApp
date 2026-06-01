@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors } from '@/themes/colors';
+import { themes } from "@/global/themes";
 
 export const styles = StyleSheet.create({
 
@@ -22,8 +22,8 @@ export const styles = StyleSheet.create({
     },
 
     buttonActive: {
-        backgroundColor: colors.tema,
-        borderColor: colors.tema,
+        backgroundColor: themes.tema,
+        borderColor: themes.tema,
     },
 
     text: {
@@ -33,7 +33,7 @@ export const styles = StyleSheet.create({
     },
 
     textActive: {
-        color: colors.text,
+        color: themes.text,
         
     },
 

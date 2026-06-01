@@ -1,5 +1,5 @@
 import { StyleSheet, Dimensions } from 'react-native';
-import { colors } from '@/themes/colors';
+import { themes } from "@/global/themes";
 
 export const styles = StyleSheet.create({
     container: {
@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
         marginTop: 110,
         verticalAlign: 'top',
         display: 'flex',
-        backgroundColor: colors.background,
+        backgroundColor: themes.background,
     },
 
     boxTop: {
@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
     buttonNew: {
         width: 45,
         height: 45,
-        backgroundColor: colors.tema,
+        backgroundColor: themes.tema,
         borderRadius: 10,
     },
 
@@ -44,7 +44,7 @@ export const styles = StyleSheet.create({
         marginRight: 'auto',
         marginBottom: 'auto',
         marginTop: 'auto',
-        color: colors.text,
+        color: themes.text,
         fontWeight: 'bold',
 
     },
@@ -69,7 +69,7 @@ export const styles = StyleSheet.create({
         marginRight: 'auto',
         marginBottom: 'auto',
         marginTop: 'auto',
-        color: colors.tema,
+        color: themes.tema,
         fontSize: 35,
         borderRadius: 5,
         borderColor: '#cfccc5',
@@ -146,8 +146,8 @@ export const styles = StyleSheet.create({
     },
 
     filterButtonActive: {
-        backgroundColor: colors.tema,
-        borderColor: colors.tema,
+        backgroundColor: themes.tema,
+        borderColor: themes.tema,
     },
 
     filterText: {
@@ -179,11 +179,11 @@ export const styles = StyleSheet.create({
     orderButtonActive: {
         backgroundColor: '#164e63',
         borderWidth: 1,
-        borderColor: colors.tema,
+        borderColor: themes.tema,
     },
 
     orderTextActive: {
-        color: colors.tema,
+        color: themes.tema,
         fontWeight: 'bold',
     },
 

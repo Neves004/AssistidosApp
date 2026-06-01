@@ -5,6 +5,7 @@ import { styles } from "@/pages/profile/styles";
 import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, NavigationProp } from '@react-navigation/native'
+import { themes } from "@/global/themes";
 
 
 export default function Profile() {
@@ -21,7 +22,7 @@ export default function Profile() {
                     style={styles.avatar} />
 
 
-                <MaterialIcons name='settings' size={35} color='#06b6d4' style={{ marginLeft: 320, marginTop: -20 }} onPress={() => navigation.navigate('Settings')} />
+                <MaterialIcons name='settings' size={35} color={themes.tema} style={{ marginLeft: 320, marginTop: -20 }} onPress={() => navigation.navigate('Settings')} />
 
                 <Text style={styles.user}> @username </Text>
 
