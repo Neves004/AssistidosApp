@@ -1,17 +1,18 @@
 import { StyleSheet } from 'react-native';
+import { colors } from '@/themes/colors';
 
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#1f2937',
+        backgroundColor: colors.background,
         paddingHorizontal: 28,
-        paddingTop: 60,
+        paddingTop: 20,
     },
 
     buttonArrow: {
         width: 45,
         height: 45,
-        backgroundColor: '#0097b2',
+        backgroundColor: colors.tema,
         borderRadius: 14,
         alignItems: 'center',
         justifyContent: 'center',
@@ -100,7 +101,7 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#0097b2',
+        backgroundColor: colors.tema,
         borderRadius: 40,
         shadowColor: "#1d034d",
         shadowOffset: {
@@ -115,7 +116,7 @@ export const styles = StyleSheet.create({
 
     titleButtonAdd: {
         fontSize: 18,
-        color: '#ffff',
+        color: colors.text,
         fontWeight: 'bold',
         alignSelf: 'center',
         marginTop: 'auto',

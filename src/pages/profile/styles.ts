@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { colors } from '@/themes/colors';
 
 export const styles = StyleSheet.create({
 
@@ -6,7 +7,7 @@ export const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         marginTop: 130,
-        backgroundColor: '#1f2937',
+        backgroundColor: colors.background,
     },
 
     avatar: {
@@ -28,14 +29,14 @@ export const styles = StyleSheet.create({
     },
 
     user: {
-        color: '#ffff',
+        color: colors.text,
         alignSelf: 'center',
         fontSize: 22,
         marginBottom: 15,
     },
 
     title: {
-        color: '#ffff',
+        color: colors.text,
         alignSelf: 'center',
         fontSize: 20,
         marginTop: 10,
@@ -52,11 +53,11 @@ export const styles = StyleSheet.create({
     },
 
     tituloH: {
-        backgroundColor: '#0097b2',
+        backgroundColor: colors.tema,
         width: 65,
         height: 25,
         borderRadius: 2,
-        color: '#ffff',
+        color: colors.text,
         fontSize: 15,
         alignSelf: 'center',
         textAlign: 'center',
@@ -65,14 +66,14 @@ export const styles = StyleSheet.create({
     },
 
     tituloText: {
-        color: '#ffff',
+        color: colors.text,
         fontSize: 12,
         alignSelf: 'center',
         marginTop: 2,
     },
 
     title2: {
-        color: '#ffff',
+        color: colors.text,
         alignSelf: 'center',
         fontSize: 20,
         marginBottom: 15,
@@ -84,11 +85,11 @@ export const styles = StyleSheet.create({
     },
 
     tituloD: {
-        backgroundColor: '#0097b2',
+        backgroundColor: colors.tema,
         width: 65,
         height: 30,
         borderRadius: 2,
-        color: '#ffff',
+        color: colors.text,
         fontSize: 20,
         textAlignVertical: 'center',
         marginTop: 10,
@@ -96,7 +97,7 @@ export const styles = StyleSheet.create({
     },
 
     text: {
-        color: '#ffff',
+        color: colors.text,
         fontSize: 18,
     },
 

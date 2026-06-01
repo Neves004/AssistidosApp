@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "@/themes/colors";
 
 export const styles = StyleSheet.create({
     card: {
@@ -19,7 +20,7 @@ export const styles = StyleSheet.create({
 
 
     title: {
-        color: '#0097b2',
+        color: colors.tema,
         fontSize: 20,
         fontWeight: 'bold',
     },
@@ -55,7 +56,7 @@ export const styles = StyleSheet.create({
         marginLeft: 'auto',
         backgroundColor: '#0097b220',
         borderWidth: 1,
-        borderColor: '#0097b2',
+        borderColor: colors.tema,
         paddingHorizontal: 10,
         paddingVertical: 4,
         borderRadius: 7,
@@ -64,7 +65,7 @@ export const styles = StyleSheet.create({
     },
 
     typeText: {
-        color: '#0097b2',
+        color: colors.tema,
         fontSize: 12,
         fontWeight: '600',
     },

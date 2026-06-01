@@ -4,6 +4,7 @@ import Login from "../pages/login";
 import BottomRoutes from "./bottom.routes";
 import NewTitle from "@/pages/newTitle";
 import Register from "@/pages/register";
+import Settings from "@/pages/settings";
 
 export default function Routes() {
     const Stack = createStackNavigator()
@@ -36,6 +37,11 @@ export default function Routes() {
             <Stack.Screen
                 name='NewTitle'
                 component={NewTitle}
+            />
+            
+            <Stack.Screen
+                name='Settings'
+                component={Settings}
             />
 
         </Stack.Navigator>

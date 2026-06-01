@@ -15,6 +15,7 @@ import { TipoMidia } from '@/global/themes';
 import { MediaTypeSelector } from '@/components/MediaTypeSelector';
 import { v4 as uuidv4 } from 'uuid';
 import { useCards } from '@/context/cards.context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type RootStackParamList = {
 
@@ -27,7 +28,7 @@ type RootStackParamList = {
 
     NewTitle: undefined;
 };
-type NavigationProp =
+export type NavigationProp =
     NativeStackNavigationProp<RootStackParamList>;
 
 
@@ -144,132 +145,134 @@ export default function NewTitle() {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             keyboardVerticalOffset={20}
         >
-            <ScrollView
-                contentContainerStyle={{
-                    paddingBottom: 60,
-                    flexGrow: 1,
-                }}
-                showsVerticalScrollIndicator={false}
-                keyboardShouldPersistTaps="handled"
-            >
+            <SafeAreaView>
 
-                <View style={styles.container}>
+                <ScrollView
+                    contentContainerStyle={{
+                        paddingBottom: 60,
+                        flexGrow: 1,
+                    }}
+                    showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps="handled"
+                >
 
-                    <TouchableOpacity activeOpacity={0.7} style={styles.buttonArrow} onPress={() => navigation.goBack()}>
-                        <Ionicons
-                            name='chevron-back-outline'
-                            style={styles.arrow}
+                    <View style={styles.container}>
+
+                        <TouchableOpacity activeOpacity={0.7} style={styles.buttonArrow} onPress={() => navigation.goBack()}>
+                            <Ionicons
+                                name='chevron-back-outline'
+                                style={styles.arrow}
+                            />
+                        </TouchableOpacity>
+
+                        <Text style={styles.title}>
+                            {isEditing
+                                ? 'Editar Título'
+                                : ' Adicionar Novo Título!'
+                            }
+
+                        </Text>
+
+                        <Text style={styles.subTitle}>
+                            {isEditing
+                                ? 'Atualize as informações do título'
+                                : ' Salve os títulos que você assistiu'}
+
+                        </Text>
+
+                        <MediaTypeSelector
+                            value={type}
+                            onChange={setType}
                         />
-                    </TouchableOpacity>
 
+                        {/* DATA ASSISTIDA (E/OU) DATA INICIAL E DATA FINAL */}
 
-                    <Text style={styles.title}>
-                        {isEditing
-                            ? 'Editar Título'
-                            : ' Adicionar Novo Título!'
+                        {
+                            type === 'Filme' ? (
+                                <>
+                                    <Text style={styles.texts}>
+                                        Data Assistida:
+                                    </Text>
+                                    <Input
+                                        titleInput="dd/mm/aaaa"
+                                        value={startDate}
+                                        onChangeText={(text) =>
+                                            setStartDate(formatDate(text))
+                                        }
+                                    />
+                                </>
+
+                            ) : (
+
+                                <>
+                                    <Text style={styles.texts}>
+                                        Data Inicial:
+                                    </Text>
+                                    <Input
+                                        titleInput="dd/mm/aaaa"
+                                        value={startDate}
+                                        onChangeText={(text) =>
+                                            setStartDate(formatDate(text))
+                                        }
+                                    />
+
+                                    <Text style={styles.texts}>
+                                        Data Final:
+                                    </Text>
+                                    <Input
+                                        titleInput="dd/mm/aaaa"
+                                        value={endDate}
+                                        onChangeText={(text) =>
+                                            setEndDate(formatDate(text))
+                                        }
+                                    />
+                                </>
+                            )
                         }
 
-                    </Text>
-
-                    <Text style={styles.subTitle}>
-                        {isEditing
-                            ? 'Atualize as informações do título'
-                            : ' Salve os títulos que você assistiu'}
-
-                    </Text>
-
-                    <MediaTypeSelector
-                        value={type}
-                        onChange={setType}
-                    />
-
-                    {/* DATA ASSISTIDA (E/OU) DATA INICIAL E DATA FINAL */}
-
-                    {
-                        type === 'Filme' ? (
-                            <>
-                                <Text style={styles.texts}>
-                                    Data Assistida:
-                                </Text>
-                                <Input
-                                    titleInput="dd/mm/aaaa"
-                                    value={startDate}
-                                    onChangeText={(text) =>
-                                        setStartDate(formatDate(text))
-                                    }
-                                />
-                            </>
-
-                        ) : (
-
-                            <>
-                                <Text style={styles.texts}>
-                                    Data Inicial:
-                                </Text>
-                                <Input
-                                    titleInput="dd/mm/aaaa"
-                                    value={startDate}
-                                    onChangeText={(text) =>
-                                        setStartDate(formatDate(text))
-                                    }
-                                />
-
-                                <Text style={styles.texts}>
-                                    Data Final:
-                                </Text>
-                                <Input
-                                    titleInput="dd/mm/aaaa"
-                                    value={endDate}
-                                    onChangeText={(text) =>
-                                        setEndDate(formatDate(text))
-                                    }
-                                />
-                            </>
-                        )
-                    }
-
-                    {/* DATA ACABA AQUI */}
+                        {/* DATA ACABA AQUI */}
 
 
-                    <Text style={styles.texts}> Título: </Text>
-                    <Input value={title} onChangeText={setTitle} />
+                        <Text style={styles.texts}> Título: </Text>
+                        <Input value={title} onChangeText={setTitle} />
 
-                    <Text style={styles.texts}> Gênero: </Text>
-                    <Input value={genre} onChangeText={setGenre} />
+                        <Text style={styles.texts}> Gênero: </Text>
+                        <Input value={genre} onChangeText={setGenre} />
 
-                    <Text style={styles.texts}> Nota (1 a 5): </Text>
-                    <Input value={note} onChangeText={setNote} />
+                        <Text style={styles.texts}> Nota (1 a 5): </Text>
+                        <Input value={note} onChangeText={setNote} />
 
-                    <Text style={styles.texts}> Comentário: </Text>
-                    <Input value={comment} onChangeText={setComment} />
+                        <Text style={styles.texts}> Comentário: </Text>
+                        <Input value={comment} onChangeText={setComment} />
 
 
-                    <Text style={styles.texts}> Capa do Título: </Text>
+                        <Text style={styles.texts}> Capa do Título: </Text>
 
-                    {/* IDEIA INICIAL - Imagens da Galeria */}
-                    <View style={{ marginTop: 10, marginBottom: 15 }}>
-                        <ImagePickerCard
-                            image={image}
-                            onPress={pickImage}
-                        />
+                        {/* IDEIA INICIAL - Imagens da Galeria */}
+                        <View style={{ marginTop: 10, marginBottom: 15 }}>
+                            <ImagePickerCard
+                                image={image}
+                                onPress={pickImage}
+                            />
 
+                        </View>
+
+                        <TouchableOpacity activeOpacity={0.7} style={styles.buttonAdd} onPress={handleAdd} >
+                            <MaterialIcons
+                                name={isEditing ? 'edit' : 'add'}
+                                size={22}
+                                color='#fff'
+                            />
+                            <Text style={styles.titleButtonAdd}>
+                                {isEditing
+                                    ? 'Atualizar'
+                                    : 'Adicionar'}
+                            </Text>
+                        </TouchableOpacity>
                     </View>
 
-                    <TouchableOpacity activeOpacity={0.7} style={styles.buttonAdd} onPress={handleAdd} >
-                        <MaterialIcons
-                            name={isEditing ? 'edit' : 'add'}
-                            size={22}
-                            color='#fff'
-                        />
-                        <Text style={styles.titleButtonAdd}>
-                            {isEditing
-                                ? 'Atualizar'
-                                : 'Adicionar'}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-
-            </ScrollView>
+                </ScrollView>
+            </SafeAreaView >
         </KeyboardAvoidingView>
 
     )

@@ -3,11 +3,14 @@ import React, { useState } from "react";
 import { Text, View, Image, ScrollView } from 'react-native';
 import { styles } from "@/pages/profile/styles";
 import { MaterialIcons } from "@expo/vector-icons";
-import { weight } from "@expo/ui/jetpack-compose";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation, NavigationProp } from '@react-navigation/native'
 
 
 export default function Profile() {
+
+    const navigation = useNavigation<NavigationProp<any>>();
+
     return (
 
         <View style={styles.container}>
@@ -18,7 +21,7 @@ export default function Profile() {
                     style={styles.avatar} />
 
 
-                <MaterialIcons name='settings' size={35} color='#06b6d4' style={{ marginLeft: 320, marginTop: -20 }} />
+                <MaterialIcons name='settings' size={35} color='#06b6d4' style={{ marginLeft: 320, marginTop: -20 }} onPress={() => navigation.navigate('Settings')} />
 
                 <Text style={styles.user}> @username </Text>
 
@@ -42,7 +45,7 @@ export default function Profile() {
 
                             <View style={styles.titulo}>
                                 <Text style={styles.tituloH}> SÉRIE </Text>
-                                <View style={{ backgroundColor: 'lightblue', height: 150, width: 100, alignSelf: 'center', marginTop: 10 }}> </View>
+                                <View style={{ backgroundColor: 'lightblue', height: 150, width: 100, alignSelf: 'center', marginTop: 10 }}/>
                                 <Text style={styles.tituloText}> nome-titulo-assistido</Text>
                                 <Text style={styles.tituloText}> (**/**/****)</Text>
 
@@ -50,7 +53,7 @@ export default function Profile() {
 
                             <View style={styles.titulo}>
                                 <Text style={styles.tituloH}> ANIME </Text>
-                                <View style={{ backgroundColor: 'lightblue', height: 150, width: 100, alignSelf: 'center', marginTop: 10 }}> </View>
+                                <View style={{ backgroundColor: 'lightblue', height: 150, width: 100, alignSelf: 'center', marginTop: 10 }}/>
                                 <Text style={styles.tituloText}> nome-titulo-assistido</Text>
                                 <Text style={styles.tituloText}> (**/**/****)</Text>
 
@@ -68,7 +71,7 @@ export default function Profile() {
                             <Text style={styles.text}> Assistidos: </Text>
                             <Text style={styles.text}> Gênero Favorito: </Text>
                             <Text style={styles.text}> Média de Notas: </Text>
-                            <View style={styles.separador}> </View>
+                            <View style={styles.separador}/>
                         </View>
 
                         <View>
@@ -76,7 +79,7 @@ export default function Profile() {
                             <Text style={styles.text}> Assistidos: </Text>
                             <Text style={styles.text}> Gênero Favorito: </Text>
                             <Text style={styles.text}> Média de Notas: </Text>
-                            <View style={styles.separador}> </View>
+                            <View style={styles.separador}/>
                         </View>
 
 
@@ -86,7 +89,7 @@ export default function Profile() {
                             <Text style={styles.text}> Assistidos: </Text>
                             <Text style={styles.text}> Gênero Favorito: </Text>
                             <Text style={styles.text}> Média de Notas: </Text>
-                            <View style={styles.separador}> </View>
+                            <View style={styles.separador}/>
 
                         </View>
 

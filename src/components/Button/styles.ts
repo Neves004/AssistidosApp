@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "@/themes/colors";
 
 export const styles = StyleSheet.create({
     
@@ -7,7 +8,7 @@ export const styles = StyleSheet.create({
         height: 50,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#0097b2',
+        backgroundColor: colors.tema,
         borderRadius: 40,
         shadowColor: "#1d034d",
         shadowOffset: {
@@ -22,7 +23,7 @@ export const styles = StyleSheet.create({
 
     textButton: {
         fontSize: 16,
-        color: '#ffff',
+        color: colors.text,
         fontWeight: 'bold',
     },
 

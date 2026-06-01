@@ -1,5 +1,5 @@
 import { StyleSheet, Dimensions } from 'react-native';
-import { themes } from '../../global/themes';
+import { colors } from '@/themes/colors';
 
 export const styles = StyleSheet.create({
     container: {
@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
         marginTop: 110,
         verticalAlign: 'top',
         display: 'flex',
-        backgroundColor: '#1f2937',
+        backgroundColor: colors.background,
     },
 
     boxTop: {
@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
     buttonNew: {
         width: 45,
         height: 45,
-        backgroundColor: '#0097b2',
+        backgroundColor: colors.tema,
         borderRadius: 10,
     },
 
@@ -44,13 +44,12 @@ export const styles = StyleSheet.create({
         marginRight: 'auto',
         marginBottom: 'auto',
         marginTop: 'auto',
-        color: '#ffff',
+        color: colors.text,
         fontWeight: 'bold',
 
     },
 
     boxMiddle: {
-        //height: Dimensions.get('window').height / 15,
         width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
@@ -70,7 +69,7 @@ export const styles = StyleSheet.create({
         marginRight: 'auto',
         marginBottom: 'auto',
         marginTop: 'auto',
-        color: '#0097b2',
+        color: colors.tema,
         fontSize: 35,
         borderRadius: 5,
         borderColor: '#cfccc5',
@@ -147,8 +146,8 @@ export const styles = StyleSheet.create({
     },
 
     filterButtonActive: {
-        backgroundColor: '#0097b2',
-        borderColor: '#0097b2',
+        backgroundColor: colors.tema,
+        borderColor: colors.tema,
     },
 
     filterText: {
@@ -166,13 +165,9 @@ export const styles = StyleSheet.create({
 
     orderButton: {
         height: 50,
-
         borderRadius: 14,
-
         backgroundColor: '#1f2937',
-
         justifyContent: 'center',
-
         paddingHorizontal: 16,
     },
 
@@ -184,11 +179,11 @@ export const styles = StyleSheet.create({
     orderButtonActive: {
         backgroundColor: '#164e63',
         borderWidth: 1,
-        borderColor: '#06b6d4',
+        borderColor: colors.tema,
     },
 
     orderTextActive: {
-        color: '#67e8f9',
+        color: colors.tema,
         fontWeight: 'bold',
     },
 

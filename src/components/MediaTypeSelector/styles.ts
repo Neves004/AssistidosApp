@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { colors } from '@/themes/colors';
 
 export const styles = StyleSheet.create({
 
@@ -12,21 +13,17 @@ export const styles = StyleSheet.create({
     button: {
         flex: 1,
         height: 45,
-
         backgroundColor: '#111827',
-
         borderWidth: 1,
         borderColor: '#374151',
-
         borderRadius: 14,
-
         alignItems: 'center',
         justifyContent: 'center',
     },
 
     buttonActive: {
-        backgroundColor: '#0097b2',
-        borderColor: '#0097b2',
+        backgroundColor: colors.tema,
+        borderColor: colors.tema,
     },
 
     text: {
@@ -36,7 +33,7 @@ export const styles = StyleSheet.create({
     },
 
     textActive: {
-        color: '#fff',
+        color: colors.text,
         
     },
 
