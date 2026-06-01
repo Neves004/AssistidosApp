@@ -18,8 +18,8 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 10,
-        backgroundColor: '#e2e0dc',
-        borderColor: '#cfccc5'
+        backgroundColor: '#2d3a4b',
+        borderColor: '#1e2732'
 
     },
 
@@ -29,6 +29,7 @@ export const styles = StyleSheet.create({
         borderRadius: 40,
         paddingLeft:5,
         fontSize:12,
+        color: '#eee'
     },
 
     Icon:{

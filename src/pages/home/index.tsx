@@ -139,7 +139,7 @@ export default function Home() {
                         Já Assistidos
                     </Text>
 
-                    <TouchableOpacity activeOpacity={0.7} style={styles.buttonNew} onPress={() => navigation.navigate('NewTitle')}>
+                    <TouchableOpacity activeOpacity={0.7} style={styles.buttonNew} onPress={() => navigation.navigate('NewTitle' as any)}>
                         <Text style={styles.titleButtonNew}>+</Text>
                     </TouchableOpacity>
 

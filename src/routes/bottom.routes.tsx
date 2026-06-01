@@ -6,26 +6,26 @@ import CustomTabBar from "../components/CustomTabBar";
 
 const Tab = createBottomTabNavigator();
 
-export default function BottomRoutes(){
-    return(
-            <Tab.Navigator
+export default function BottomRoutes() {
+    return (
+        <Tab.Navigator
             screenOptions={{
-                headerShown:false
+                headerShown: false
             }}
-            tabBar={props=><CustomTabBar {...props}/>}
-            >
-                <Tab.Screen
+            tabBar={props => <CustomTabBar {...props} />}
+        >
+            <Tab.Screen
                 name="Home"
-                
+
                 component={Home}
-                />
-                
-                <Tab.Screen
+            />
+
+            <Tab.Screen
                 name="Profile"
                 component={Profile}
-                />
-                
-            </Tab.Navigator>
+            />
+
+        </Tab.Navigator>
     );
 }
 

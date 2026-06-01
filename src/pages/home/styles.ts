@@ -70,8 +70,8 @@ export const styles = StyleSheet.create({
         marginRight: 'auto',
         marginBottom: 'auto',
         marginTop: 'auto',
-        color: '#6d6f73',
-        fontSize: 25,
+        color: '#0097b2',
+        fontSize: 35,
         borderRadius: 5,
         borderColor: '#cfccc5',
     },
@@ -79,7 +79,6 @@ export const styles = StyleSheet.create({
     buttonFilter: {
         width: 40,
         height: 40,
-        backgroundColor: '#e2e0dc',
         borderRadius: 5,
         marginTop: 10,
     },

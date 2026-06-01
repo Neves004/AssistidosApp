@@ -60,7 +60,7 @@ export const Input = forwardRef((Props: Props, ref) => {
 
                         styles.input, { width: calculateSizeWidth() }
                     ]}
-                    placeholder={titleInput}
+                    placeholder={titleInput} placeholderTextColor={"#999"}
                     {...rest}
                 />
                 {IconRight && IconRightName && (

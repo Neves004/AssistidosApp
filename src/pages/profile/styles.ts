@@ -9,6 +9,16 @@ export const styles = StyleSheet.create({
         backgroundColor: '#1f2937',
     },
 
+    avatar: {
+        marginTop: -40,
+        width: 80,
+        height: 80,
+        borderRadius: 60,
+        borderWidth: 3,
+        borderColor: "#fff",
+        alignSelf: 'center',
+    },
+
     box: {
         marginTop: 40,
         backgroundColor: '#091321',
@@ -17,26 +27,17 @@ export const styles = StyleSheet.create({
         borderRadius: 10,
     },
 
-    avatar: {
-        marginTop: -40,
-        width: 80,
-        height: 80,
-        borderRadius: 60,
-        borderWidth: 3,
-        borderColor: "#fff",
-        alignSelf: 'center'
-    },
-
     user: {
         color: '#ffff',
         alignSelf: 'center',
-        fontSize: 20,
+        fontSize: 22,
+        marginBottom: 15,
     },
 
     title: {
         color: '#ffff',
         alignSelf: 'center',
-        fontSize: 18,
+        fontSize: 20,
         marginTop: 10,
         marginBottom: -20,
     },
@@ -45,7 +46,7 @@ export const styles = StyleSheet.create({
         height: 265,
         borderRadius: 10,
         width: 150,
-        marginRight: 20,
+        marginRight: 10,
         backgroundColor: '#17314e',
         gap: 3,
     },
@@ -73,26 +74,39 @@ export const styles = StyleSheet.create({
     title2: {
         color: '#ffff',
         alignSelf: 'center',
-        fontSize: 18,
-        marginBottom:15,
-        marginTop:-30
+        fontSize: 20,
+        marginBottom: 15,
+        marginTop: -30
     },
 
     dados: {
         marginLeft: 30,
     },
 
+    tituloD: {
+        backgroundColor: '#0097b2',
+        width: 65,
+        height: 30,
+        borderRadius: 2,
+        color: '#ffff',
+        fontSize: 20,
+        textAlignVertical: 'center',
+        marginTop: 10,
+        marginBottom:10,
+    },
+
     text: {
         color: '#ffff',
-        fontSize: 15,
+        fontSize: 18,
     },
 
     separador: {
-        width: '120%',
+        width: '100%',
+        marginLeft: -20,
         height: 3,
-        backgroundColor: '#17314e',
-        marginTop: 3,
-        marginBottom: 3,
+        backgroundColor: '#1f2937',
+        marginTop: 10,
+        marginBottom: 10,
     },
 
 })
