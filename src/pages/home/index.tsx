@@ -31,7 +31,7 @@ export default function Home() {
 
 
     // async function buscarPosters(query: string) {
-    //     const apiKey = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmODgxZTE4MWU4MDZhOTJiMjFlY2Y2NzE5ZDY2ZTBmNiIsIm5iZiI6MTc3NjI1ODAxOS44NDcwMDAxLCJzdWIiOiI2OWRmOGJlM2NjOGFhMWM1YjRiN2Y4YjciLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.es48orD0dJuZgdqDaLgENQvl_FAUmsGA6I83Q3BFtdc'; // Substitua pela sua chave do TMDB
+    //     const apiKey = ; // Substitua pela sua chave do TMDB
     //     const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}`;
 
     //     const options = {

@@ -9,6 +9,7 @@ import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
 
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { register } from '@/api/endpoints';
 
 export default function Register() {
 
@@ -36,7 +37,11 @@ export default function Register() {
 
             Alert.alert('Sucesso', 'Conta criada com sucesso!');
 
+            //Chama a função de registrar usuário no servidor
+            await register(user, email, password)
+
             navigation.navigate('Login');
+
 
         } catch (error) {
             console.log(error);

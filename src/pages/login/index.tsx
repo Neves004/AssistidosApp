@@ -5,12 +5,14 @@ import Logo from '@/assets/logo.png';
 import { MaterialIcons, Octicons } from '@expo/vector-icons';
 import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
-import { useNavigation , NavigationProp} from '@react-navigation/native'
+import { useNavigation, NavigationProp } from '@react-navigation/native'
+import { login } from '@/api/endpoints';
+import { setToken } from '@/api/auth';
 
 export default function Login() {
-    
+
     const navigation = useNavigation<NavigationProp<any>>();
-    
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(true);
@@ -21,7 +23,12 @@ export default function Login() {
                 return Alert.alert('Atenção', 'Informe os campos obrigatórios!')
             }
 
-            navigation.reset({routes:[{name:"BottomRoutes"}]})
+            //pegando o retorno da api e colocando o token no async storage
+            const ret = await login(email, password);
+            if (ret.token) {
+                setToken(ret.token)
+                navigation.reset({ routes: [{ name: "BottomRoutes" }] })
+            }
 
         } catch (error) {
             console.log(error)
@@ -61,7 +68,7 @@ export default function Login() {
             </View>
 
             <View style={styles.boxBottom}>
-                <Button text='ENTRAR' onPress={()=>getLogin()}
+                <Button text='ENTRAR' onPress={() => getLogin()}
                 />
 
                 <Text style={styles.textBottom}> Não tem conta? <Text style={{ color: '#a839ba' }} onPress={() => navigation.navigate('Register')}> Crie aqui </Text> </Text>
