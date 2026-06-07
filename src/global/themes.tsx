@@ -5,4 +5,8 @@ export const themes = {
         tema: '#0097b2',
 }
 
-export type TipoMidia = "Filme" | "Anime" | "Série"
+export type TipoMidia = {
+        id:number;
+        name:string;
+        canHaveEndDate:boolean;
+}

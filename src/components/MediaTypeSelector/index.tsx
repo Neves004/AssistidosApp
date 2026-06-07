@@ -3,6 +3,8 @@ import { TouchableOpacity, View, Text } from 'react-native';
 import { styles } from '@/components/MediaTypeSelector/styles';
 
 import { TipoMidia } from '@/global/themes';
+import { useEffect, useState } from 'react';
+import { chamarTipos } from '@/api/endpoints';
 
 type Props = {
     value: TipoMidia;
@@ -14,75 +16,42 @@ export function MediaTypeSelector({
     onChange
 }: Props) {
 
+    const [tipos, setTipos] = useState([] as TipoMidia[]);
+
+    useEffect(() => {
+        chamarTipos().then((alface) => {
+            setTipos(alface)
+        })
+    }, [])
+
     return (
 
         <View style={styles.container}>
+            {tipos.map((tipo) => {
 
-            <TouchableOpacity
-                activeOpacity={0.7}
-                style={[
-                    styles.button,
-                    value === 'Filme' &&
-                    styles.buttonActive
-                ]}
-                onPress={() => onChange('Filme')}
-            >
-
-                <Text
+                return <TouchableOpacity key={tipo.id}
+                    activeOpacity={0.7}
                     style={[
-                        styles.text,
-                        value === 'Filme' &&
-                        styles.textActive
+                        styles.button,
+                        value.name === tipo.name &&
+                        styles.buttonActive
                     ]}
+                    onPress={() => onChange(tipo)}
                 >
-                    Filme
-                </Text>
 
-            </TouchableOpacity>
+                    <Text
+                        style={[
+                            styles.text,
+                            value.name === tipo.name &&
+                            styles.textActive
+                        ]}
+                    >
+                        {tipo.name}
+                    </Text>
+                </TouchableOpacity>
+            })}
 
-            <TouchableOpacity
-                activeOpacity={0.7}
-                style={[
-                    styles.button,
-                    value === 'Série' &&
-                    styles.buttonActive
-                ]}
-                onPress={() => onChange('Série')}
-            >
 
-                <Text
-                    style={[
-                        styles.text,
-                        value === 'Série' &&
-                        styles.textActive
-                    ]}
-                >
-                    Série
-                </Text>
-
-            </TouchableOpacity>
-
-            <TouchableOpacity
-                activeOpacity={0.7}
-                style={[
-                    styles.button,
-                    value === 'Anime' &&
-                    styles.buttonActive
-                ]}
-                onPress={() => onChange('Anime')}
-            >
-
-                <Text
-                    style={[
-                        styles.text,
-                        value === 'Anime' &&
-                        styles.textActive
-                    ]}
-                >
-                    Anime
-                </Text>
-
-            </TouchableOpacity>
 
         </View>
     )

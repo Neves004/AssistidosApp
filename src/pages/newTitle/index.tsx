@@ -16,6 +16,7 @@ import { MediaTypeSelector } from '@/components/MediaTypeSelector';
 import { v4 as uuidv4 } from 'uuid';
 import { useCards } from '@/context/cards.context';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { atualizarTitulo, registrarTitulo } from '@/api/endpoints';
 
 type RootStackParamList = {
 
@@ -37,16 +38,16 @@ export default function NewTitle() {
     const editItem = route.params?.editItem;
     const isEditing = !!editItem;
 
-    const [title, setTitle] = useState(editItem?.titulo || '');
-    const [startDate, setStartDate] = useState(editItem?.dataInicial || '');
-    const [endDate, setEndDate] = useState(editItem?.dataFinal || '');
-    const [genre, setGenre] = useState(editItem?.genero || '');
-    const [note, setNote] = useState(String(editItem?.nota || ''));
-    const [comment, setComment] = useState(editItem?.comentario || '');
-    const [image, setImage] = useState(editItem?.capa || '');
+    const [title, setTitle] = useState(editItem?.titleName || '');
+    const [startDate, setStartDate] = useState(editItem?.startDate || '');
+    const [endDate, setEndDate] = useState(editItem?.endDate || '');
+    const [genre, setGenre] = useState(editItem?.genre || '');
+    const [note, setNote] = useState(editItem?.note?.toString() || '');
+    const [comment, setComment] = useState(editItem?.comment || '');
+    const [image, setImage] = useState(editItem?.image || '');
     const [type, setType] =
         useState<TipoMidia>(
-            editItem?.tipo || 'Filme'
+            editItem?.tipo || { id: 1, name: 'Filme' }
         );
     const navigation = useNavigation<NavigationProp>();
 
@@ -71,60 +72,51 @@ export default function NewTitle() {
         }
     }
 
-    function handleAdd() {
-        if (!title.trim() || !startDate.trim() || !genre.trim() || !note.trim() || !comment.trim() || !image) {
-            return Alert.alert(
-                'Campos obrigatórios',
-                'Preencha todos os campos antes de continuar.'
-            );
-        }
-        if (Number(note) < 1 || Number(note) > 5) {
-            return Alert.alert(
-                'Nota inválida',
-                'A nota deve ser entre 1 e 5.'
-            );
-        }
+    async function handleAdd() {
+        try {
+            if (!title.trim() || !startDate.trim() || !genre.trim() || !note.trim() || !comment.trim() || !image) {
+                return Alert.alert(
+                    'Campos obrigatórios',
+                    'Preencha todos os campos antes de continuar.'
+                );
+            }
+            if (Number(note) < 1 || Number(note) > 5) {
+                return Alert.alert(
+                    'Nota inválida',
+                    'A nota deve ser entre 1 e 5.'
+                );
+            }
 
-        if (startDate.length !== 10) {
-            return Alert.alert(
-                'Data inválida',
-                'Digite a data no formato ddmmaaaa.'
-            );
-        }
+            if (startDate.length !== 10) {
+                return Alert.alert(
+                    'Data inválida',
+                    'Digite a data no formato ddmmaaaa.'
+                );
+            }
 
-        if (
-            type !== 'Filme' &&
-            endDate &&
-            endDate.length !== 10
-        ) {
-            return Alert.alert(
-                'Data inválida',
-                'Digite a data final corretamente.'
-            );
-        }
+            if (
+                type.canHaveEndDate &&
+                endDate &&
+                endDate.length !== 10
+            ) {
+                return Alert.alert(
+                    'Data inválida',
+                    'Digite a data final corretamente.'
+                );
+            }
 
-        const newCard: CardType = {
-            id: editItem?.id || uuidv4(),
-            capa: image,
-            titulo: title,
-            genero: genre,
-            nota: Number(note),
-            tipo: type,
-            dataInicial: startDate,
-            dataFinal:
-                type !== 'Filme'
-                    ? endDate
-                    : undefined,
-            comentario: comment,
-        };
 
-        if (isEditing) {
-            updateCard(newCard);
-        } else {
-            addCard(newCard);
+            if (isEditing) {
+                await atualizarTitulo(editItem.id, title, startDate, endDate, genre, note, comment, image, type.id);
+            } else {
+                await registrarTitulo(title, startDate, endDate, genre, note, comment, image, type.id);
+            }
+            navigation.goBack();
+
+        } catch (error) {
+            console.log(error);
         }
 
-        navigation.goBack();
     }
 
     function formatDate(text: string) {
@@ -188,7 +180,7 @@ export default function NewTitle() {
                         {/* DATA ASSISTIDA (E/OU) DATA INICIAL E DATA FINAL */}
 
                         {
-                            type === 'Filme' ? (
+                            !type.canHaveEndDate ? (
                                 <>
                                     <Text style={styles.texts}>
                                         Data Assistida:

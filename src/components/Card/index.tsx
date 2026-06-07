@@ -12,14 +12,14 @@ type Props = TouchableOpacityProps & {
 
 export type CardType = {
     id: string,
-    capa: string,
-    titulo: string,
-    genero: string,
-    nota: number,
-    dataInicial: string,
-    dataFinal?: string,
-    tipo: TipoMidia,
-    comentario: string,
+    image: string,
+    titleName: string,
+    genre: string,
+    note: number,
+    startDate: string,
+    endDate?: string,
+    type: TipoMidia,
+    comment: string,
 }
 
 export function Card({ card, onDelete, onEdit }: Props) {
@@ -43,7 +43,7 @@ export function Card({ card, onDelete, onEdit }: Props) {
 
             default:
                 return <Text> ✩✩✩✩✩ </Text>
-        }
+        } // foi eu que fiz
     }
 
     function dataFormatada(data: string) {
@@ -65,7 +65,7 @@ export function Card({ card, onDelete, onEdit }: Props) {
 
                 {/* CAPA */}
                 <Image
-                    source={{ uri: card.capa }}
+                    source={{ uri: card.image }}
                     style={styles.capa}
                 />
 
@@ -74,18 +74,18 @@ export function Card({ card, onDelete, onEdit }: Props) {
 
                     {/* topo */}
                     <View style={styles.topCard}>
-                        <Text style={styles.title}>{card.titulo}</Text>
-                        <Text style={styles.genre}>{card.genero}</Text>
+                        <Text style={styles.title}>{card.titleName}</Text>
 
                         <View style={styles.typeBadge}>
-                            <Text style={styles.typeText}>{card.tipo}</Text>
+                            <Text style={styles.typeText}>{card.type?.name}</Text>
                         </View>
                     </View>
 
                     {/* meio */}
                     <View style={styles.middleCard}>
 
-                        <View style={{gap: 2,}}>
+                        <Text style={styles.genre}>{card.genre}</Text>
+                        <View style={{ gap: 2, }}>
                             {/* PRIMEIRA LINHA */}
                             <View
                                 style={{
@@ -95,25 +95,25 @@ export function Card({ card, onDelete, onEdit }: Props) {
                                 }}
                             >
                                 <Text style={styles.textCard}>
-                                    {card.nota}/5
+                                    {card.note}/5
                                 </Text>
 
                                 <Text style={{ color: '#fbbf24', fontSize: 14 }}>
-                                    {estrelas(card.nota)}
+                                    {estrelas(card.note)}
                                 </Text>
 
                             </View>
 
                             {/* SEGUNDA LINHA */}
                             <Text style={styles.textData}>
-                                {card.dataInicial} {card.dataFinal ? `— ${card.dataFinal}` : ''}
+                                {card.startDate} {card.endDate ? `— ${card.endDate}` : ''}
                             </Text>
                         </View>
                     </View>
 
                     {/* comentário */}
                     <Text style={styles.comment}>
-                        {card.comentario}
+                        {card.comment}
                     </Text>
 
                     {/* ações */}

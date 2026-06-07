@@ -29,7 +29,8 @@ export const styles = StyleSheet.create({
         color: '#9ca3af',
         fontStyle: 'italic',
         fontSize: 15,
-        alignSelf: 'center'
+        alignSelf: 'flex-start',
+        marginTop: -10,
     },
 
     textCard: {
@@ -71,7 +72,7 @@ export const styles = StyleSheet.create({
     },
 
     middleCard: {
-        flexDirection: 'row',
+        flexDirection: 'column',
         display: 'flex',
         marginTop: 6,
         gap: 4,

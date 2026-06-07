@@ -1,11 +1,13 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 import { CardType } from '@/components/Card';
+import { apagarTitulo } from '@/api/endpoints';
 
 type CardsContextType = {
     cards: CardType[];
     addCard: (card: CardType) => void;
     deleteCard: (id: string) => void;
     updateCard: (card: CardType) => void;
+    setCards: (cards: CardType[]) => void;
 };
 
 const CardsContext =
@@ -28,6 +30,7 @@ export function CardsProvider({
         setCards((old) =>
             old.filter((item) => item.id !== id)
         );
+        apagarTitulo(Number.parseInt(id));
     }
 
     function updateCard(card: CardType) {
@@ -45,6 +48,7 @@ export function CardsProvider({
                 addCard,
                 deleteCard,
                 updateCard,
+                setCards,
             }}
         >
             {children}

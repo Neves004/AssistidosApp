@@ -14,5 +14,8 @@ export const Tipo = new EntitySchema({
             unique:true,
             nullable: false,
         },
+        canHaveEndDate:{
+            type:'boolean',
+        }
     }
 })

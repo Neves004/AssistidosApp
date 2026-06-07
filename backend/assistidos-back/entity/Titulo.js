@@ -45,6 +45,13 @@ export const Titulo = new EntitySchema({
             joinColumn: {name: 'tipo_id'},
             onDelete: 'CASCADE',
             nullable: false
+        },
+        user:{
+            target: 'Usuario',
+            type: 'many-to-one',
+            joinColumn: {name: 'user_id'},
+            onDelete: 'CASCADE',
+            nullable: false
         }
     }
 })

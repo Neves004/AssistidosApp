@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { FlatList, Text, TouchableOpacity, View, Modal, Pressable } from 'react-native';
+import React, { useEffect, useState } from "react";
+import { FlatList, Text, TouchableOpacity, View, Modal, Pressable, Alert } from 'react-native';
 import { styles } from '@/pages/home/styles';
 import { Input } from "@/components/Input";
 import { Feather, Octicons } from '@expo/vector-icons';
@@ -9,6 +9,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useRoute } from '@react-navigation/native';
 import { TipoMidia } from "@/global/themes";
 import { useCards } from '@/context/cards.context';
+import { pegarTitulos, pesquisarTitulo } from "@/api/endpoints";
 
 // type tmdbType = {
 //     poster_path: string;
@@ -16,7 +17,9 @@ import { useCards } from '@/context/cards.context';
 
 export default function Home() {
     const [open, setOpen] = useState<boolean>(false);
-    const { cards, deleteCard } = useCards();
+    const { cards, deleteCard, setCards } = useCards();
+
+    const [ query, setQuery ] = useState('');
 
     const [filterType, setFilterType] =
         useState<TipoMidia | 'Todos'>('Todos');
@@ -28,6 +31,27 @@ export default function Home() {
             'highest' |
             'lowest'
         >('recent');
+
+
+    useEffect(() => {
+        pegarTitulos().then((v) => {
+            console.log(v);
+            setCards(v);
+        });
+    },[]);
+
+    useEffect(() => {
+        const intervalId = setTimeout(() => {
+            pesquisarTitulo(query).then((v) => {
+                console.log("PESQUISADO: "+query);
+                setCards(v);
+            })
+        }, 100);
+        return () => {
+            clearTimeout(intervalId);
+        }
+    }, [query]);
+
 
 
     // async function buscarPosters(query: string) {
@@ -74,9 +98,20 @@ export default function Home() {
     type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
     const navigation = useNavigation<NavigationProp>();
 
+    navigation.addListener('focus',() => {
+        pegarTitulos().then((v) => {
+            console.log(v);
+            setCards(v);
+        });
+    })
+
     function handleDelete(id: string) {
-        deleteCard(id);
+        Alert.alert('Você tem certeza de que deseja apagar?', 'Essa ação é irreversível',
+            [{'text':'Sim','onPress':()=> {deleteCard(id);}},
+                {'text':'Não'}
+            ])
     }
+
 
     function handleEdit(item: CardType) {
         navigation.navigate('NewTitle', {
@@ -91,36 +126,36 @@ export default function Home() {
             if (filterType === 'Todos') {
                 return true;
             }
-            return item.tipo === filterType;
+            return item.type === filterType;
         })
 
         .sort((a, b) => {
             switch (sortBy) {
                 case 'highest':
-                    return b.nota - a.nota;
+                    return b.note - a.note;
                 case 'lowest':
-                    return a.nota - b.nota;
+                    return a.note - b.note;
                 case 'recent':
                     return (
                         new Date(
-                            a.dataInicial.split('/').reverse().join('-')
+                            a.startDate.split('/').reverse().join('-')
                         ).getTime()
                         -
                         new Date(
-                            b.dataInicial.split('/').reverse().join('-')
+                            b.startDate.split('/').reverse().join('-')
                         ).getTime()
                     ) * -1;
 
                 case 'old':
                     return (
                         new Date(
-                            a.dataInicial.split('/').reverse().join('-')
+                            a.startDate.split('/').reverse().join('-')
                         ).getTime()
 
                         -
 
                         new Date(
-                            b.dataInicial.split('/').reverse().join('-')
+                            b.startDate.split('/').reverse().join('-')
                         ).getTime()
                     );
 
@@ -153,7 +188,10 @@ export default function Home() {
                     <Input
                         titleInput="Pesquisa por títulos, gêneros, datas ou notas..."
                         IconLeft={Octicons}
-                        IconLeftName="search" />
+                        IconLeftName="search" 
+                        value={query}
+                        onChangeText={(txt) => setQuery(txt)}
+                    />
 
                     <TouchableOpacity activeOpacity={0.6} style={styles.buttonFilter} onPress={() => setOpen(!open)}>
                         <Feather
