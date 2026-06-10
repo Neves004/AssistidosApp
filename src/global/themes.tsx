@@ -10,3 +10,9 @@ export type TipoMidia = {
         name:string;
         canHaveEndDate:boolean;
 }
+
+export type User ={
+        id: number;
+        username: string;
+        email: string;
+}

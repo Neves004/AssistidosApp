@@ -86,7 +86,7 @@ app.post('/login', async (req, res) => {
         const token = jwt.sign({ id: user.id, username: user.username, email: user.email }, JWT_SECRET, {
             expiresIn: '7d'
         });
-        res.status(200).json({ message: 'Logado com sucesso', token });
+        res.status(200).json({ message: 'Logado com sucesso', token, user:{id: user.id, username:user.username, email: user.email} });
     } else {
         res.status(401).json({ message: 'E-mail ou senha incorretos' });
     }
@@ -110,7 +110,7 @@ app.get('/tipos', verifyBearer, async (req, res) => {
 
 //Pegando as informações do titulo
 app.get('/titulos', verifyBearer, async (req, res) => {
-    const result = await tituloRepo.find({relations: {'user': true, 'type': true}, where: {'user': req.user.id}});
+    const result = await tituloRepo.find({ relations: { 'user': true, 'type': true }, where: { 'user': req.user.id } });
     res.status(200).json(result);
 })
 
@@ -118,38 +118,60 @@ app.get('/titulos', verifyBearer, async (req, res) => {
 app.put('/titulos', verifyBearer, async (req, res) => {
     const { id, titleName, startDate, endDate, genre, note, comment, image, type } = req.body;
 
-    const titulo = await tituloRepo.findOne({relations: {'user': true, 'type': true}, where: {id}});
+    const titulo = await tituloRepo.findOne({ relations: { 'user': true, 'type': true }, where: { id } });
 
     if (titulo['user']['id'] == req.user.id) {
-        const newType = await tipoRepo.findOneBy({id: type});
+        const newType = await tipoRepo.findOneBy({ id: type });
 
         const result = await tituloRepo.update({ id }, {
-            titleName, startDate, endDate:(newType.canHaveEndDate?endDate:null), genre, note, comment, image, type
+            titleName, startDate, endDate: (newType.canHaveEndDate ? endDate : null), genre, note, comment, image, type
         });
         res.status(200).json({ message: 'Título atualizado com sucesso' })
     }
-    res.status(401).json({message: 'Sem permissão'});
+    res.status(401).json({ message: 'Sem permissão' });
 })
 
 
 //Apagando titulo
-app.delete('/titulos/:id', verifyBearer, async(req,res) =>{
+app.delete('/titulos/:id', verifyBearer, async (req, res) => {
     const id = req.params.id;
 
-    const titulo = await tituloRepo.findOne({relations: {'user':true}, where:{id}});
-    if(titulo['user']['id'] == req.user.id){
-        const result = await tituloRepo.delete({id});
-        res.status(202).json({message: 'Titulo apagado com sucesso'})
+    const titulo = await tituloRepo.findOne({ relations: { 'user': true }, where: { id } });
+    if (titulo['user']['id'] == req.user.id) {
+        const result = await tituloRepo.delete({ id });
+        res.status(202).json({ message: 'Titulo apagado com sucesso' })
         return;
     }
-    res.status(401).json({message: 'Sem permissão'});
+    res.status(401).json({ message: 'Sem permissão' });
 })
 
-app.get('/titulos/:query', verifyBearer, async(req,res)=>{
+//Input de pesquisa
+app.get('/titulos/:query', verifyBearer, async (req, res) => {
     const query = req.params.query;
-     const result = await tituloRepo.find({relations: {'user': true, 'type': true}, where: {'user': req.user.id,titleName:Like(`%${query}%`)}});
+    const result = await tituloRepo.find({
+        relations: { 'user': true, 'type': true }, where: [
+            { 'user': req.user.id, titleName: Like(`%${query}%`) },
+            { 'user': req.user.id, note: Like(`%${query}%`) },
+            { 'user': req.user.id, genre: Like(`%${query}%`) },
+            { 'user': req.user.id, startDate: Like(`%${query}%`) },
+            { 'user': req.user.id, endDate: Like(`%${query}%`) },
+            { 'user': req.user.id, comment: Like(`%${query}%`) }
+        ]
+    });
     res.status(200).json(result);
 })
+
+app.put('/user', verifyBearer, async (req,res) =>{
+    const {id, username} = req.body;
+
+    if(id==req.user.id){
+        await usuarioRepo.update({id}, {username})
+        res.status(200).json({message: 'Nome de usuário atualizado com sucesso'})
+    }else{
+        res.status(401).json({message: 'Sem permissão'})
+    }
+    
+} )
 
 app.listen({ port: 3001, host: '0.0.0.0' }, () => console.log(`Assistidos rodando na porta 3001 acesse por http://localhost:3001`))
 

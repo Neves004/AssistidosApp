@@ -102,11 +102,11 @@ export const styles = StyleSheet.create({
         backgroundColor: '#111827',
         flex: 1,
         maxHeight: '55%',
+        minHeight:'55%',
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,
         marginTop: 'auto',
         padding: 24,
-        marginBottom: 80
     },
 
     modalOverlay: {

@@ -1,14 +1,24 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Text, View, Image, ScrollView } from 'react-native';
 import { styles } from "@/pages/profile/styles";
 import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, NavigationProp } from '@react-navigation/native'
-import { themes } from "@/global/themes";
+import { themes, User } from "@/global/themes";
+import { getUser } from "@/api/auth";
 
 
 export default function Profile() {
+    const [user,setUser] = useState('');
+
+    useEffect(() =>{
+        getUser().then((useer) =>{
+            if (useer){
+                setUser(((JSON.parse(useer)) as User).username)
+            }
+        })
+    },  [])
 
     const navigation = useNavigation<NavigationProp<any>>();
 
@@ -24,7 +34,7 @@ export default function Profile() {
 
                 <MaterialIcons name='settings' size={35} color={themes.tema} style={{ marginLeft: 320, marginTop: -20 }} onPress={() => navigation.navigate('Settings')} />
 
-                <Text style={styles.user}> @username </Text>
+                <Text style={styles.user}> @{user} </Text>
 
                 <ScrollView
                     showsVerticalScrollIndicator={false}

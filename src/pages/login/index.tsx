@@ -7,7 +7,7 @@ import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
 import { useNavigation, NavigationProp } from '@react-navigation/native'
 import { login } from '@/api/endpoints';
-import { setToken } from '@/api/auth';
+import { setToken, setUser } from '@/api/auth';
 
 export default function Login() {
 
@@ -27,6 +27,7 @@ export default function Login() {
             const ret = await login(email, password);
             if (ret.token) {
                 setToken(ret.token)
+                setUser(JSON.stringify(ret.user))
                 navigation.reset({ routes: [{ name: "BottomRoutes" }] })
             }
 

@@ -35,7 +35,6 @@ export default function Home() {
 
     useEffect(() => {
         pegarTitulos().then((v) => {
-            console.log(v);
             setCards(v);
         });
     },[]);
@@ -43,7 +42,6 @@ export default function Home() {
     useEffect(() => {
         const intervalId = setTimeout(() => {
             pesquisarTitulo(query).then((v) => {
-                console.log("PESQUISADO: "+query);
                 setCards(v);
             })
         }, 100);
@@ -100,7 +98,6 @@ export default function Home() {
 
     navigation.addListener('focus',() => {
         pegarTitulos().then((v) => {
-            console.log(v);
             setCards(v);
         });
     })
