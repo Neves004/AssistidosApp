@@ -28,16 +28,18 @@ dotenv.config();
 
 const BCRYPT_ROUNDS = 10;
 
-const app = express(); //Inicializar o express
-app.use(cors());
-app.use(bodyParser.json());
-app.use(cookieParser());
-
 //Pasta para uploads
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 //Garante que a pasta existe
 fs.mkdirSync(path.join(dirname, 'uploads'), { recursive: true });
+
+const app = express(); //Inicializar o express
+app.use(cors());
+app.use(bodyParser.json());
+app.use(cookieParser());
+app.use('/uploads', express.static(path.join(dirname, 'uploads')));
+
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -86,7 +88,7 @@ app.post('/login', async (req, res) => {
         const token = jwt.sign({ id: user.id, username: user.username, email: user.email }, JWT_SECRET, {
             expiresIn: '7d'
         });
-        res.status(200).json({ message: 'Logado com sucesso', token, user:{id: user.id, username:user.username, email: user.email} });
+        res.status(200).json({ message: 'Logado com sucesso', token, user: { id: user.id, username: user.username, email: user.email, avatar: user.avatar } });
     } else {
         res.status(401).json({ message: 'E-mail ou senha incorretos' });
     }
@@ -161,17 +163,189 @@ app.get('/titulos/:query', verifyBearer, async (req, res) => {
     res.status(200).json(result);
 })
 
-app.put('/user', verifyBearer, async (req,res) =>{
-    const {id, username} = req.body;
+app.put('/user', verifyBearer, async (req, res) => {
+    const { id, username } = req.body;
 
-    if(id==req.user.id){
-        await usuarioRepo.update({id}, {username})
-        res.status(200).json({message: 'Nome de usuário atualizado com sucesso'})
-    }else{
-        res.status(401).json({message: 'Sem permissão'})
+    if (id == req.user.id) {
+        await usuarioRepo.update({ id }, { username })
+        res.status(200).json({ message: 'Nome de usuário atualizado com sucesso' })
+    } else {
+        res.status(401).json({ message: 'Sem permissão' })
     }
-    
-} )
+
+})
+
+
+//Pegando informações dos títulos para o perfil 
+app.get('/perfil', verifyBearer, async (req, res) => {
+    const titulos = await tituloRepo.find({
+        relations: { type: true }, where: { user: req.user.id }
+    });
+
+    // Filtra apenas os títulos cujo tipo é "filme"
+    const filmes = titulos.filter(
+        t => t.type?.id === 1
+    );
+
+    // Filtra apenas os títulos cujo tipo é "série"
+    const series = titulos.filter(
+        t => t.type?.id === 2
+    );
+
+    // Filtra apenas os títulos cujo tipo é "anime"
+    const animes = titulos.filter(
+        t => t.type?.id === 3
+    );
+    //Calculando média das notas
+    function mediaNotas(lista) {
+        // Evitando divisão por zero
+        if (lista.length === 0) return 0;
+
+        // Soma todas as notas da lista
+        const soma = lista.reduce(
+            (acc, item) => acc + Number(item.note || 0),
+            0
+        );
+
+        // Calcula a média
+        // toFixed(1) mantém apenas 1 casa decimal
+        return Number((soma / lista.length).toFixed(1));
+    }
+
+    //Descobrindo o título favorito 
+    function generoFavorito(lista) {
+        // Se não houver títulos
+        if (lista.length === 0) return 'Nenhum';
+
+        const contador = {};
+
+        // Percorre todos os títulos e soma +1 cada gênero encontrado
+        lista.forEach(item => {
+            if (!item.genre) return;
+
+            // separa por vírgula
+            const generos = item.genre.split(',');
+
+            // Remove espaços extras do início e do fim
+            generos.forEach(genero => {
+                const nome = genero.trim();
+
+                //Se algum estiver vazio, só o ignora
+                if (!nome) return;
+
+                //Contador para somar a quantidade de cada
+                contador[nome] =
+                    (contador[nome] || 0) + 1;
+            });
+        });
+
+        // Se nenhum gênero foi encontrado
+        if (Object.keys(contador).length === 0)
+            return 'Nenhum';
+
+        // Procura o gênero com maior quantidade
+        return Object.keys(contador).reduce((a, b) =>
+            contador[a] > contador[b] ? a : b
+        );
+    }
+
+    //Conversão das datas
+    function converterData(data) {
+        if (!data) return new Date(0);
+
+        const [dia, mes, ano] = data.split('/');
+        return new Date(
+            Number(ano),
+            Number(mes) - 1,
+            Number(dia)
+        );
+    }
+
+    //Pega o último filme asssistido
+    const ultimoFilme = filmes.sort(
+        (a, b) =>
+            converterData(b.startDate).getTime() - converterData(a.startDate).getTime()
+    )[0] || null;
+
+    //Pega a última série assistida + tratamento caso não houver endDate
+    const ultimaSerie = series.sort(
+        (a, b) =>
+            converterData(b.endDate || b.startDate).getTime() - converterData(a.endDate || a.startDate).getTime()
+    )[0] || null;
+
+    //Pega o último anime assistido + tratamento caso não houver endDate
+    const ultimoAnime = animes.sort(
+        (a, b) =>
+            converterData(b.endDate || b.startDate).getTime() - converterData(a.endDate || a.startDate).getTime()
+    )[0] || null;
+
+    //Respostas sendo enviadas
+    res.status(200).json({
+        geral: {
+            assistidos: titulos.length,
+            generoFavorito: generoFavorito(titulos),
+            mediaNotas: mediaNotas(titulos)
+        },
+
+        filmes: {
+            assistidos: filmes.length,
+            generoFavorito: generoFavorito(filmes),
+            mediaNotas: mediaNotas(filmes)
+        },
+
+        series: {
+            assistidos: series.length,
+            generoFavorito: generoFavorito(series),
+            mediaNotas: mediaNotas(series)
+        },
+
+        animes: {
+            assistidos: animes.length,
+            generoFavorito: generoFavorito(animes),
+            mediaNotas: mediaNotas(animes)
+        },
+
+        ultimos: {
+            filme: ultimoFilme,
+            serie: ultimaSerie,
+            anime: ultimoAnime
+        }
+    });
+});
+
+
+app.post('/user/avatar', verifyBearer, async (req, res) => {
+    try {
+        const { image } = req.body;
+        if (!image) {
+            return res.status(400).json({ message: 'Imagem não enviada' });
+        }
+
+        const base64 = image.replace(/^data:image\/\w+;base64,/, '');
+        const buffer = Buffer.from(base64, 'base64');
+        const filename = uuidv4() + '.png';
+        const filePath = path.join(dirname, 'uploads', filename);
+
+        fs.writeFileSync(filePath, buffer);
+
+        const BASE_URL = process.env.BASE_URL;
+        const fileUrl = `${BASE_URL}/uploads/${filename}`;
+
+        await usuarioRepo.update(
+            { id: req.user.id },
+            { avatar: fileUrl }
+        );
+
+        res.status(200).json({
+            message: 'Avatar salvo com sucesso',
+            avatar: fileUrl
+        });
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: 'Erro ao salvar imagem' });
+    }
+});
 
 app.listen({ port: 3001, host: '0.0.0.0' }, () => console.log(`Assistidos rodando na porta 3001 acesse por http://localhost:3001`))
 

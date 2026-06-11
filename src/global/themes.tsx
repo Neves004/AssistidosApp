@@ -6,13 +6,46 @@ export const themes = {
 }
 
 export type TipoMidia = {
-        id:number;
-        name:string;
-        canHaveEndDate:boolean;
+        id: number;
+        name: string;
+        canHaveEndDate: boolean;
 }
 
-export type User ={
+export type User = {
         id: number;
         username: string;
         email: string;
+        avatar?: string;
+}
+
+export type Perfil = {
+        geral: {
+                assistidos: number;
+                generoFavorito: string;
+                mediaNotas: number;
+        };
+
+        filmes: {
+                assistidos: number;
+                generoFavorito: string;
+                mediaNotas: number;
+        };
+
+        series: {
+                assistidos: number;
+                generoFavorito: string;
+                mediaNotas: number;
+        };
+
+        animes: {
+                assistidos: number;
+                generoFavorito: string;
+                mediaNotas: number;
+        };
+
+        ultimos: {
+                filme: any;
+                serie: any;
+                anime: any;
+        };
 }

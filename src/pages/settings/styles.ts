@@ -12,7 +12,6 @@ export const styles = StyleSheet.create({
     buttonArrow: {
         width: 45,
         height: 45,
-        backgroundColor: themes.tema,
         borderRadius: 14,
         alignItems: 'center',
         justifyContent: 'center',
@@ -34,13 +33,6 @@ export const styles = StyleSheet.create({
         color: themes.text,
         fontSize: 22,
         marginBottom: 5,
-    },
-
-    cor: {
-        width: 70,
-        height: 20,
-        backgroundColor: themes.tema,
-        borderRadius: 5,
     },
 
     textUser: {

@@ -34,7 +34,6 @@ export const styles = StyleSheet.create({
     buttonNew: {
         width: 45,
         height: 45,
-        backgroundColor: themes.tema,
         borderRadius: 10,
     },
 
@@ -69,7 +68,6 @@ export const styles = StyleSheet.create({
         marginRight: 'auto',
         marginBottom: 'auto',
         marginTop: 'auto',
-        color: themes.tema,
         fontSize: 35,
         borderRadius: 5,
         borderColor: '#cfccc5',
@@ -133,22 +131,14 @@ export const styles = StyleSheet.create({
     filterButton: {
         paddingHorizontal: 18,
         height: 42,
-
         borderRadius: 12,
-
         backgroundColor: '#1f2937',
-
         borderWidth: 1,
         borderColor: '#374151',
-
         alignItems: 'center',
         justifyContent: 'center',
     },
 
-    filterButtonActive: {
-        backgroundColor: themes.tema,
-        borderColor: themes.tema,
-    },
 
     filterText: {
         color: '#9ca3af',
@@ -176,14 +166,7 @@ export const styles = StyleSheet.create({
         fontSize: 15,
     },
 
-    orderButtonActive: {
-        backgroundColor: '#164e63',
-        borderWidth: 1,
-        borderColor: themes.tema,
-    },
-
     orderTextActive: {
-        color: themes.tema,
         fontWeight: 'bold',
     },
 

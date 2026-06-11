@@ -3,6 +3,7 @@ import { styles } from "@/components/Card/styles";
 import { MaterialIcons, Octicons } from '@expo/vector-icons';
 import { TipoMidia } from "@/global/themes";
 import { Image } from 'react-native';
+import { useTheme } from "@/context/ThemeContext";
 
 type Props = TouchableOpacityProps & {
     card: CardType;
@@ -23,6 +24,7 @@ export type CardType = {
 }
 
 export function Card({ card, onDelete, onEdit }: Props) {
+    const {tema} = useTheme();
 
     function estrelas(nota: number) {
         switch (nota) {
@@ -74,10 +76,10 @@ export function Card({ card, onDelete, onEdit }: Props) {
 
                     {/* topo */}
                     <View style={styles.topCard}>
-                        <Text style={styles.title}>{card.titleName}</Text>
+                        <Text style={[styles.title, {color:tema}]}>{card.titleName}</Text>
 
-                        <View style={styles.typeBadge}>
-                            <Text style={styles.typeText}>{card.type?.name}</Text>
+                        <View style={[styles.typeBadge, {borderColor:tema}]}>
+                            <Text style={[styles.typeText, {color:tema}]}>{card.type?.name}</Text>
                         </View>
                     </View>
 

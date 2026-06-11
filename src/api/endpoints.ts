@@ -121,7 +121,7 @@ const apagarTitulo = async (id: number) => {
     return [];
 }
 
-const pesquisarTitulo = async (titleName: string) =>{
+const pesquisarTitulo = async (titleName: string) => {
     const endpoint = ASSISTIDOS_API.base_url + 'titulos/' + titleName;
     const res = await fetch(endpoint, {
         'method': 'GET',
@@ -139,5 +139,42 @@ const pesquisarTitulo = async (titleName: string) =>{
     return [];
 }
 
+const pegarPerfil = async () => {
+    const endpoint = ASSISTIDOS_API.base_url + 'perfil';
+
+    const res = await fetch(endpoint, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + await getToken(),
+        },
+    });
+
+    if (res.ok) {
+        const j = await res.json();
+        return j;
+    }
+
+    return null;
+}
+
+const atualizarAvatar = async (base64: string) => {
+    const endpoint = ASSISTIDOS_API.base_url + 'user/avatar';
+
+    const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + await getToken(),
+        },
+        body: JSON.stringify({
+            image: base64
+        }),
+    });
+
+    return await res.json();
+};
+
 //Exportando as funções
-export { register, login, chamarTipos, registrarTitulo, atualizarTitulo, pegarTitulos, apagarTitulo, pesquisarTitulo }
+export { register, login, chamarTipos, registrarTitulo, atualizarTitulo, pegarTitulos, apagarTitulo, pesquisarTitulo, pegarPerfil, atualizarAvatar }

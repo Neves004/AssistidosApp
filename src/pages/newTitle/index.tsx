@@ -17,6 +17,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useCards } from '@/context/cards.context';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { atualizarTitulo, registrarTitulo } from '@/api/endpoints';
+import { useTheme } from '@/context/ThemeContext';
 
 type RootStackParamList = {
 
@@ -34,6 +35,7 @@ export type NavigationProp =
 
 
 export default function NewTitle() {
+    const {tema} = useTheme();
     const route = useRoute<any>();
     const editItem = route.params?.editItem;
     const isEditing = !!editItem;
@@ -50,8 +52,6 @@ export default function NewTitle() {
             editItem?.tipo || { id: 1, name: 'Filme' }
         );
     const navigation = useNavigation<NavigationProp>();
-
-    const { addCard, updateCard } = useCards();
 
     async function pickImage() {
         const permission =
@@ -150,7 +150,7 @@ export default function NewTitle() {
 
                     <View style={styles.container}>
 
-                        <TouchableOpacity activeOpacity={0.7} style={styles.buttonArrow} onPress={() => navigation.goBack()}>
+                        <TouchableOpacity activeOpacity={0.7} style={[styles.buttonArrow, {backgroundColor:tema}]} onPress={() => navigation.goBack()}>
                             <Ionicons
                                 name='chevron-back-outline'
                                 style={styles.arrow}
@@ -249,7 +249,7 @@ export default function NewTitle() {
 
                         </View>
 
-                        <TouchableOpacity activeOpacity={0.7} style={styles.buttonAdd} onPress={handleAdd} >
+                        <TouchableOpacity activeOpacity={0.7} style={[styles.buttonAdd, {backgroundColor:tema}]} onPress={handleAdd} >
                             <MaterialIcons
                                 name={isEditing ? 'edit' : 'add'}
                                 size={22}

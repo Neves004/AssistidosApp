@@ -17,7 +17,6 @@ export const styles = StyleSheet.create({
         borderRadius: 60,
         borderWidth: 3,
         // borderColor: "#fff",
-        borderColor: themes.tema,
         alignSelf: 'center',
 
     },
@@ -55,7 +54,6 @@ export const styles = StyleSheet.create({
     },
 
     tituloH: {
-        backgroundColor: themes.tema,
         width: 65,
         height: 25,
         borderRadius: 2,
@@ -65,6 +63,14 @@ export const styles = StyleSheet.create({
         textAlign: 'center',
         textAlignVertical: 'center',
         marginTop: 10,
+    },
+
+    capa: {
+        height: 150,
+        width: 100,
+        alignSelf: 'center',
+        marginTop: 10,
+        borderRadius: 8
     },
 
     tituloText: {
@@ -87,15 +93,15 @@ export const styles = StyleSheet.create({
     },
 
     tituloD: {
-        backgroundColor: themes.tema,
-        width: 65,
-        height: 30,
+        width: 80,
+        height: 35,
         borderRadius: 2,
         color: themes.text,
         fontSize: 20,
         textAlignVertical: 'center',
         marginTop: 10,
-        marginBottom:10,
+        marginBottom: 10,
+        textAlign:'auto'
     },
 
     text: {

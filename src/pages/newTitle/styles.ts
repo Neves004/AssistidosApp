@@ -12,7 +12,6 @@ export const styles = StyleSheet.create({
     buttonArrow: {
         width: 45,
         height: 45,
-        backgroundColor: themes.tema,
         borderRadius: 14,
         alignItems: 'center',
         justifyContent: 'center',
@@ -101,7 +100,6 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: themes.tema,
         borderRadius: 40,
         shadowColor: "#1d034d",
         shadowOffset: {

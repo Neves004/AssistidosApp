@@ -6,20 +6,21 @@ import { Feather, Octicons } from '@expo/vector-icons';
 import { Card, CardType } from '@/components/Card';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useRoute } from '@react-navigation/native';
 import { TipoMidia } from "@/global/themes";
 import { useCards } from '@/context/cards.context';
 import { pegarTitulos, pesquisarTitulo } from "@/api/endpoints";
+import { useTheme } from "@/context/ThemeContext";
 
 // type tmdbType = {
 //     poster_path: string;
 // }
 
 export default function Home() {
+    const { tema } = useTheme();
     const [open, setOpen] = useState<boolean>(false);
     const { cards, deleteCard, setCards } = useCards();
 
-    const [ query, setQuery ] = useState('');
+    const [query, setQuery] = useState('');
 
     const [filterType, setFilterType] =
         useState<TipoMidia | 'Todos'>('Todos');
@@ -37,7 +38,7 @@ export default function Home() {
         pegarTitulos().then((v) => {
             setCards(v);
         });
-    },[]);
+    }, []);
 
     useEffect(() => {
         const intervalId = setTimeout(() => {
@@ -96,7 +97,7 @@ export default function Home() {
     type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
     const navigation = useNavigation<NavigationProp>();
 
-    navigation.addListener('focus',() => {
+    navigation.addListener('focus', () => {
         pegarTitulos().then((v) => {
             setCards(v);
         });
@@ -104,8 +105,8 @@ export default function Home() {
 
     function handleDelete(id: string) {
         Alert.alert('Você tem certeza de que deseja apagar?', 'Essa ação é irreversível',
-            [{'text':'Sim','onPress':()=> {deleteCard(id);}},
-                {'text':'Não'}
+            [{ 'text': 'Sim', 'onPress': () => { deleteCard(id); } },
+            { 'text': 'Não' }
             ])
     }
 
@@ -171,7 +172,7 @@ export default function Home() {
                         Já Assistidos
                     </Text>
 
-                    <TouchableOpacity activeOpacity={0.7} style={styles.buttonNew} onPress={() => navigation.navigate('NewTitle' as any)}>
+                    <TouchableOpacity activeOpacity={0.7} style={[styles.buttonNew, { backgroundColor: tema }]} onPress={() => navigation.navigate('NewTitle' as any)}>
                         <Text style={styles.titleButtonNew}>+</Text>
                     </TouchableOpacity>
 
@@ -185,7 +186,7 @@ export default function Home() {
                     <Input
                         titleInput="Pesquisa por títulos, gêneros, datas ou notas..."
                         IconLeft={Octicons}
-                        IconLeftName="search" 
+                        IconLeftName="search"
                         value={query}
                         onChangeText={(txt) => setQuery(txt)}
                     />
@@ -193,7 +194,7 @@ export default function Home() {
                     <TouchableOpacity activeOpacity={0.6} style={styles.buttonFilter} onPress={() => setOpen(!open)}>
                         <Feather
                             name='filter'
-                            style={styles.filter} />
+                            style={[styles.filter, { color: tema }]} />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -236,9 +237,8 @@ export default function Home() {
 
                                             style={[
                                                 styles.filterButton,
+                                                filterType === item && { backgroundColor: tema, borderColor: tema },
 
-                                                filterType === item &&
-                                                styles.filterButtonActive
                                             ]}
 
                                             onPress={() =>
@@ -275,7 +275,7 @@ export default function Home() {
                                     styles.orderButton,
 
                                     sortBy === 'recent' &&
-                                    styles.orderButtonActive
+                                    { borderColor: tema, borderWidth: 1, }
                                 ]}
                                 onPress={() => setSortBy('recent')}
                             >
@@ -284,7 +284,7 @@ export default function Home() {
                                         styles.orderText,
 
                                         sortBy === 'recent' &&
-                                        styles.orderTextActive
+                                        styles.orderTextActive && { color: tema }
                                     ]}
                                 >
                                     Mais recente
@@ -297,7 +297,7 @@ export default function Home() {
                                     styles.orderButton,
 
                                     sortBy === 'old' &&
-                                    styles.orderButtonActive
+                                    { borderColor: tema, borderWidth: 1, }
                                 ]}
                                 onPress={() => setSortBy('old')}
                             >
@@ -306,7 +306,7 @@ export default function Home() {
                                         styles.orderText,
 
                                         sortBy === 'old' &&
-                                        styles.orderTextActive
+                                        styles.orderTextActive && { color: tema }
                                     ]}
                                 >
                                     Menos recente
@@ -319,7 +319,7 @@ export default function Home() {
                                     styles.orderButton,
 
                                     sortBy === 'highest' &&
-                                    styles.orderButtonActive
+                                    {borderColor:tema,borderWidth: 1,}
                                 ]}
                                 onPress={() => setSortBy('highest')}
                             >
@@ -328,7 +328,7 @@ export default function Home() {
                                         styles.orderText,
 
                                         sortBy === 'highest' &&
-                                        styles.orderTextActive
+                                        styles.orderTextActive && { color: tema }
                                     ]}
                                 >
                                     Maior nota
@@ -341,7 +341,7 @@ export default function Home() {
                                     styles.orderButton,
 
                                     sortBy === 'lowest' &&
-                                    styles.orderButtonActive
+                                    {borderColor:tema,borderWidth: 1,}
                                 ]}
                                 onPress={() => setSortBy('lowest')}
                             >
@@ -350,7 +350,7 @@ export default function Home() {
                                         styles.orderText,
 
                                         sortBy === 'lowest' &&
-                                        styles.orderTextActive
+                                        styles.orderTextActive && { color: tema }
                                     ]}
                                 >
                                     Menor nota
