@@ -52,10 +52,16 @@ export default function Profile() {
     const dataUltimoAnime = ultimoAnime?.endDate ?? ultimoAnime?.startDate ?? '--/--/----';
 
 
+    const navigation = useNavigation<NavigationProp<any>>();
+
     //Carregar os dados
     useEffect(() => {
-        carregarDados();
-    }, []);
+        const unsubscribe = navigation.addListener('focus', () => {
+            carregarDados();
+        });
+
+        return unsubscribe;
+    }, [navigation]);
 
     async function carregarDados() {
         const [useer, dados] = await Promise.all([
@@ -73,8 +79,7 @@ export default function Profile() {
         }
     }
 
-    const navigation = useNavigation<NavigationProp<any>>();
-    navigation.addListener('focus', () => carregarDados());
+
 
 
     return (
@@ -86,7 +91,7 @@ export default function Profile() {
                 <Image
                     source={
                         user?.avatar
-                            ? {  uri:user.avatar  }
+                            ? { uri: user.avatar }
                             : require('@/assets/pfp.png')
                     }
                     style={[styles.avatar, { borderColor: tema }]}

@@ -8,46 +8,122 @@ import { useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
 
 import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system';
-import { atualizarAvatar } from "@/api/endpoints";
+import { atualizarAvatar, atualizarUsername, limparDados } from "@/api/endpoints";
+import { getUser, setUser } from "@/api/auth";
+import { AppModal } from "@/components/AppModal";
+import { Alert, TextInput } from "react-native";
 
 export default function Settings() {
     const navigation = useNavigation<NavigationProp>();
-
     const { tema, setTema } = useTheme();
 
     const [showColors, setShowColors] = useState(false);
     const cores = [
         '#0097b2',
-        '#60A5FA',
-        '#7DD3FC',
-        '#CBD5E1',
-        '#2DD4BF',
         '#29b3a0',
         '#269e52',
+        '#60A5FA',
         '#6c39bd',
-        '#f49349',
         '#c46f2d',
         '#415c77',
 
     ];
 
+    const [showUsernameModal, setShowUsernameModal] = useState(false);
+    const [newUsername, setNewUsername] = useState('');
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+
     const escolherFoto = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
-            quality: 0.7,
+            quality: 0.5,
             base64: true,
         });
 
         if (!result.canceled && result.assets?.length > 0) {
             const base64 = result.assets[0].base64;
 
-            const res = await atualizarAvatar(`data:image/jpeg;base64,${base64}`);
+            const res = await atualizarAvatar(
+                `data:image/jpeg;base64,${base64}`
+            );
+
+            // Atualiza o usuário salvo localmente
+            if (res?.avatar) {
+                const userString = await getUser();
+
+                if (userString) {
+                    const user = JSON.parse(userString);
+
+                    user.avatar = res.avatar;
+
+                    await setUser(JSON.stringify(user));
+                }
+            }
 
             navigation.goBack();
         }
     };
+
+    const alterarNome = async () => {
+        try {
+            if (!newUsername.trim()) {
+                return Alert.alert(
+                    'Atenção',
+                    'Digite um nome de usuário'
+                );
+            }
+
+            const res = await atualizarUsername(
+                newUsername.trim()
+            );
+
+            const userString = await getUser();
+
+            if (userString) {
+                const user = JSON.parse(userString);
+
+                user.username = newUsername.trim();
+
+                await setUser(JSON.stringify(user));
+            }
+
+            Alert.alert(
+                'Sucesso',
+                res.message
+            );
+
+            setShowUsernameModal(false);
+
+            navigation.goBack();
+
+        } catch (error: any) {
+            Alert.alert(
+                'Erro',
+                error.message
+            );
+        }
+    };
+
+    const apagarTudo = async () => {
+        try {
+            const res = await limparDados();
+
+            Alert.alert(
+                'Sucesso',
+                res.message
+            );
+
+            setShowDeleteModal(false);
+
+        } catch (error: any) {
+            Alert.alert(
+                'Erro',
+                error.message
+            );
+        }
+    };
+
 
     return (
         <View style={styles.container}>
@@ -83,83 +159,240 @@ export default function Settings() {
 
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+                    <TouchableOpacity style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }} onPress={() => setShowUsernameModal(true)}>
                         <MaterialIcons name='create' size={22} color='#f8e9e9' />
                         <Text style={styles.textUser}>Mudar nome de usuário</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+                    <TouchableOpacity style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }} onPress={() => setShowDeleteModal(true)}>
                         <Ionicons name='trash' size={22} color='#fa6767' />
                         <Text style={styles.textClear}>Limpar dados</Text>
                     </TouchableOpacity>
                 </View>
 
-                <Modal
+                <AppModal
                     visible={showColors}
-                    transparent
-                    animationType="fade"
+                    title="Escolha uma cor"
+                    onClose={() => setShowColors(false)}
                 >
                     <View
                         style={{
-                            flex: 1,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            backgroundColor: 'rgba(0,0,0,0.5)'
+                            flexDirection: 'row',
+                            flexWrap: 'wrap',
+                            gap: 10,
+                            justifyContent: 'center'
                         }}
                     >
-                        <View
-                            style={{
-                                backgroundColor: '#1f2937',
-                                padding: 20,
-                                borderRadius: 15,
-                                width: '80%'
+                        {cores.map(cor => {
+                            const selecionada = cor === tema;
+
+                            return (
+                                <TouchableOpacity
+                                    key={cor}
+                                    onPress={() => {
+                                        setTema(cor);
+                                        setShowColors(false);
+                                    }}
+                                >
+                                    <View
+                                        style={{
+                                            width: 40,
+                                            height: 40,
+                                            borderRadius: 20,
+                                            backgroundColor: cor,
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            borderWidth: selecionada ? 1.5 : 0,
+                                            borderColor: '#fff',
+                                        }}
+                                    >
+                                        {selecionada && (
+                                            <Ionicons
+                                                name="checkmark"
+                                                size={24}
+                                                color="#fff"
+                                            />
+                                        )}
+                                    </View>
+                                </TouchableOpacity>
+                            );
+                        })}
+                    </View>
+                </AppModal>
+
+                <AppModal
+                    visible={showUsernameModal}
+                    title="Alterar nome de usuário"
+                    onClose={() => {
+                        setShowUsernameModal(false);
+                        setNewUsername('');
+                    }}>
+
+                    <TextInput
+                        value={newUsername}
+                        onChangeText={setNewUsername}
+                        placeholder="Digite o novo nome"
+                        placeholderTextColor="#9ca3af"
+                        style={{
+                            backgroundColor: '#374151',
+                            color: '#fff',
+                            borderRadius: 10,
+                            paddingHorizontal: 12,
+                            paddingVertical: 10,
+                            marginBottom: 20,
+                        }}
+                    />
+
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            justifyContent: 'flex-end',
+                            gap: 15,
+                        }}
+                    >
+                        <TouchableOpacity
+                            onPress={() => {
+                                setShowUsernameModal(false);
+                                setNewUsername('');
                             }}
                         >
                             <Text
                                 style={{
-                                    color: '#fff',
-                                    fontSize: 18,
-                                    marginBottom: 20
+                                    color: '#ef4444',
+                                    fontWeight: '600',
                                 }}
                             >
-                                Escolha uma cor
+                                Cancelar
                             </Text>
+                        </TouchableOpacity>
 
-                            <View
+                        <TouchableOpacity
+                            onPress={alterarNome}
+                        >
+                            <Text
                                 style={{
-                                    flexDirection: 'row',
-                                    flexWrap: 'wrap',
-                                    gap: 10,
-                                    justifyContent: 'center'
+                                    color: tema,
+                                    fontWeight: '600',
                                 }}
                             >
-                                {cores.map(cor => (
-                                    <TouchableOpacity
-                                        key={cor}
-                                        onPress={() => {
-                                            setTema(cor);
-                                            setShowColors(false);
-                                        }}
-                                    >
-                                        <View
-                                            style={{
-                                                width: 40,
-                                                height: 40,
-                                                borderRadius: 20,
-                                                backgroundColor: cor
-                                            }}
-                                        />
-                                    </TouchableOpacity>
-                                ))}
-                            </View>
-                        </View>
+                                Salvar
+                            </Text>
+                        </TouchableOpacity>
                     </View>
-                </Modal>
+                </AppModal>
 
+                <AppModal
+                    visible={showDeleteModal}
+                    title=""
+                    onClose={() => setShowDeleteModal(false)}
+                >
+                    <View
+                        style={{
+                            alignItems: 'center',
+                            marginBottom: 5,
+                            marginTop: -50,
+                        }}
+                    >
+                        <Ionicons
+                            name="warning-outline"
+                            size={50}
+                            color="#ef4444"
+                        />
+                    </View>
+
+                    <Text
+                        style={{
+                            color: '#fff',
+                            fontSize: 18,
+                            fontWeight: 'bold',
+                            textAlign: 'center',
+                            marginBottom: 10,
+                        }}
+                    >
+                        Limpar Dados
+                    </Text>
+
+                    <Text
+                        style={{
+                            color: '#ef4444',
+                            fontWeight: 'bold',
+                            marginBottom: 10,
+                            textAlign: 'center'
+
+                        }}
+                    >
+                        Essa ação não pode ser desfeita.
+                    </Text>
+                    <Text
+                        style={{
+                            color: '#fff',
+                            marginBottom: 5,
+                            lineHeight: 22,
+                            textAlign: 'center'
+                        }}
+                    >
+                        Os itens abaixo serão removidos:
+                    </Text>
+
+                    <View
+                        style={{
+                            backgroundColor: '#374151',
+                            borderRadius: 10,
+                            paddingVertical: 12,
+                            paddingHorizontal: 16,
+                            marginBottom: 20,
+                        }}
+                    >
+                        <Text
+                            style={{
+                                color: '#d1d5db',
+                                lineHeight: 24,
+                                textAlign: 'center',
+                            }}
+                        >
+                            Todas as Mídias Assistidas,{'\n'}
+                            Estatísticas e Histórico.
+                        </Text>
+                    </View>
+
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            justifyContent: 'flex-end',
+                            gap: 15,
+                        }}
+                    >
+                        <TouchableOpacity
+                            onPress={() => setShowDeleteModal(false)}
+                        >
+                            <Text
+                                style={{
+                                    color: '#9ca3af',
+                                    fontWeight: '600',
+                                }}
+                            >
+                                Cancelar
+                            </Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            onPress={apagarTudo}
+                        >
+                            <Text
+                                style={{
+                                    color: '#ef4444',
+                                    fontWeight: 'bold',
+                                }}
+                            >
+                                Apagar Tudo
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </AppModal>
 
 
             </SafeAreaView>
-        </View>
+        </View >
 
     )
 }

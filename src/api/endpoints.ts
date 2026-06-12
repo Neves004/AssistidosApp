@@ -15,6 +15,10 @@ const register = async (user: string, email: string, password: string) => {
         'body': JSON.stringify({ username: user, email: email, password: password })
     });
     const j = await res.json();
+
+    if (!res.ok) {
+        throw new Error(j.message);
+    }
     return j;
 }
 
@@ -29,6 +33,10 @@ const login = async (email: string, password: string) => {
         'body': JSON.stringify({ email: email, password: password })
     })
     const j = await res.json();
+
+    if (!res.ok) {
+        throw new Error(j.message);
+    }
     return j;
 }
 
@@ -176,5 +184,50 @@ const atualizarAvatar = async (base64: string) => {
     return await res.json();
 };
 
+const atualizarUsername = async (username: string) => {
+    const endpoint = ASSISTIDOS_API.base_url + 'user';
+
+    const res = await fetch(endpoint, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + await getToken(),
+        },
+        body: JSON.stringify({
+            username
+        }),
+    });
+
+    const j = await res.json();
+
+    if (!res.ok) {
+        throw new Error(j.message);
+    }
+
+    return j;
+
+}
+
+async function limparDados() {
+    const endpoint = ASSISTIDOS_API.base_url + 'titles';
+    const res = await fetch(endpoint, {
+        method: 'DELETE',
+        headers: {
+            Authorization: 'Bearer ' + await getToken(),
+        },
+    });
+
+    const json = await res.json();
+
+    if (!res.ok) {
+        throw new Error(json.message);
+    }
+
+    return json;
+}
+
 //Exportando as funções
-export { register, login, chamarTipos, registrarTitulo, atualizarTitulo, pegarTitulos, apagarTitulo, pesquisarTitulo, pegarPerfil, atualizarAvatar }
+export {
+    register, login, chamarTipos, registrarTitulo, atualizarTitulo, pegarTitulos, apagarTitulo, pesquisarTitulo, pegarPerfil,
+    atualizarAvatar, atualizarUsername, limparDados
+}

@@ -31,20 +31,35 @@ export default function Register() {
                 return Alert.alert('Atenção', 'Preencha todos os campos!');
             }
 
+            if (user.trim().length < 3) {
+                return Alert.alert('Nome de usuário inválido', 'O nome de usuário deve ter pelo menos 3 caracteres.');
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!emailRegex.test(email)) {
+                return Alert.alert('E-mail inválido', 'Digite um endereço de e-mail válido.');
+            }
+
+            if (password.length < 6) {
+                return Alert.alert('Senha inválida', 'A senha deve ter pelo menos 6 caracteres.');
+            }
+
             if (password !== confirmPassword) {
                 return Alert.alert('Atenção', 'As senhas não coincidem!');
             }
 
-            Alert.alert('Sucesso', 'Conta criada com sucesso!');
+            //tratando espaços vazios e email(não tem distinção de maiúsculas e minúsculas)
+            const response = await register(user.trim(), email.trim().toLowerCase(), password);
 
-            //Chama a função de registrar usuário no servidor
-            await register(user, email, password)
+            if (response?.message) {
+                Alert.alert('Sucesso', response.message);
+                navigation.navigate('Login');
+            }
 
-            navigation.navigate('Login');
-
-
-        } catch (error) {
-            console.log(error);
+        } catch (error: any) {
+            Alert.alert(
+                'Erro', error.message);
         }
 
     }

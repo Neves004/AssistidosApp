@@ -15,6 +15,7 @@ import { Titulo } from "./entity/Titulo.js";
 import { Tipo } from "./entity/Tipo.js";
 import { Like } from 'typeorm';
 
+
 AppDataSource.initialize().then(() => {
     console.log('Banco criado slk, compens')
 })
@@ -36,7 +37,8 @@ fs.mkdirSync(path.join(dirname, 'uploads'), { recursive: true });
 
 const app = express(); //Inicializar o express
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '20mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '20mb' }));
 app.use(cookieParser());
 app.use('/uploads', express.static(path.join(dirname, 'uploads')));
 
@@ -65,34 +67,114 @@ const verifyBearer = (req, res, next) => {
 
 
 //Autenticação
-app.post('/register', async (requisicao, resposta) => {
-    const { email, username, password } = requisicao.body;
-    const pass = bcrypt.hashSync(password, BCRYPT_ROUNDS); //criptografando senha
-    const result = await usuarioRepo.insert({
-        email, username, password: pass, avatar: '', created_at: new Date()
-    });
-    const user = await usuarioRepo.findOneBy({ email, username });
-    const token = jwt.sign({ id: user.id, username: user.username, email: user.email }, JWT_SECRET, {
-        expiresIn: '7d'
-    });
+app.post('/register', async (req, res) => {
+    try {
+        const { email, username, password } = req.body;
 
-    resposta.status(200).json({ message: 'Registrado com sucesso', token })
-})
+        if (!email || !username || !password) {
+            return res.status(400).json({
+                message: 'Preencha todos os campos'
+            });
+        }
+
+        if (username.trim().length < 3) {
+            return res.status(400).json({
+                message: 'O nome de usuário deve ter pelo menos 3 caracteres'
+            });
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({
+                message: 'E-mail inválido'
+            });
+        }
+
+        if (password.length < 6) {
+            return res.status(400).json({
+                message: 'A senha deve ter pelo menos 6 caracteres'
+            });
+        }
+
+        const emailExistente = await usuarioRepo.findOneBy({ email });
+
+        if (emailExistente) {
+            return res.status(400).json({
+                message: 'Este e-mail já está cadastrado'
+            });
+        }
+
+        const usuarioExistente = await usuarioRepo.findOneBy({ username });
+
+        if (usuarioExistente) {
+            return res.status(400).json({
+                message: 'Este nome de usuário já está em uso'
+            });
+        }
+
+        const pass = bcrypt.hashSync(password, BCRYPT_ROUNDS); //criptografando senha
+
+        const result = await usuarioRepo.insert({
+            email, username, password: pass, avatar: '', created_at: new Date()
+        });
+
+        const user = await usuarioRepo.findOneBy({ email });
+        const token = jwt.sign({ id: user.id, username: user.username, email: user.email }, JWT_SECRET, {
+            expiresIn: '7d'
+        });
+
+        res.status(200).json({ message: 'Registrado com sucesso', token })
+
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({
+            message: 'Erro ao registrar usuário'
+        });
+    }
+});
 
 app.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-    const user = await usuarioRepo.findOneBy({ email });
-    const isSame = bcrypt.compareSync(password, user.password); //comparando senha com a senha criptografada no banco
+    try {
+        const { email, password } = req.body;
 
-    if (isSame) {
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Preencha e-mail e senha' });
+        }
+
+        const user = await usuarioRepo.findOneBy({ email }); //comparando email com email no banco
+
+        if (!user) {
+            return res.status(401).json({
+                message: 'E-mail ou senha incorretos'
+            });
+        }
+
+        const isSame = bcrypt.compareSync(password, user.password); //comparando senha com a senha criptografada no banco
+
+        if (!isSame) {
+            return res.status(401).json({
+                message: 'E-mail ou senha incorretos'
+            });
+        }
+
         const token = jwt.sign({ id: user.id, username: user.username, email: user.email }, JWT_SECRET, {
             expiresIn: '7d'
         });
         res.status(200).json({ message: 'Logado com sucesso', token, user: { id: user.id, username: user.username, email: user.email, avatar: user.avatar } });
-    } else {
-        res.status(401).json({ message: 'E-mail ou senha incorretos' });
+
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({
+            message: 'Erro interno do servidor'
+        });
+
     }
-})
+});
+
+
 
 //Inserindo os titulos no BD
 app.post('/titulos', verifyBearer, async (req, res) => {
@@ -163,15 +245,42 @@ app.get('/titulos/:query', verifyBearer, async (req, res) => {
     res.status(200).json(result);
 })
 
+//Atualizar nome de usuário
 app.put('/user', verifyBearer, async (req, res) => {
-    const { id, username } = req.body;
+    try {
+        const { id, username } = req.body;
 
-    if (id == req.user.id) {
+        if (!username) {
+            return res.status(400).json({
+                message: 'Informe um nome de usuário'
+            });
+        }
+
+        if (username.trim().length < 3) {
+            return res.status(400).json({
+                message: 'O nome de usuário deve ter pelo menos 3 caracteres'
+            });
+        }
+
+        const usuarioExistente = await usuarioRepo.findOneBy({ username });
+
+        if (usuarioExistente) {
+            return res.status(400).json({
+                message: 'Este nome de usuário já está em uso'
+            });
+        }
+
         await usuarioRepo.update({ id }, { username })
         res.status(200).json({ message: 'Nome de usuário atualizado com sucesso' })
-    } else {
-        res.status(401).json({ message: 'Sem permissão' })
+
+    } catch {
+        console.log(error);
+
+        return res.status(500).json({
+            message: 'Erro ao atualizar usuário'
+        });
     }
+
 
 })
 
@@ -314,6 +423,7 @@ app.get('/perfil', verifyBearer, async (req, res) => {
 });
 
 
+//Pegando o Avatar
 app.post('/user/avatar', verifyBearer, async (req, res) => {
     try {
         const { image } = req.body;
@@ -346,6 +456,38 @@ app.post('/user/avatar', verifyBearer, async (req, res) => {
         res.status(500).json({ message: 'Erro ao salvar imagem' });
     }
 });
+
+app.get('/user/avatar', verifyBearer, async (req, res) => {
+    try {
+        const usuario = await usuarioRepo.findOne({
+            where: { id: req.user.id },
+            select: ['avatar']
+        });
+
+        if (!usuario) {
+            return res.status(404).json({ message: 'Usuário não encontrado' });
+        }
+
+        return res.status(200).json({ avatar: usuario.avatar });
+
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: 'Erro ao buscar avatar' });
+    }
+});
+
+app.delete('/titulos', verifyBearer, async (req, res) => {
+    try {
+        await tituloRepo.delete({ user: req.user.id });
+        return res.status(200).json({ message: 'Todos os títulos foram removidos' });
+
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({ message: 'Erro ao limpar dados' });
+    }
+});
+
 
 app.listen({ port: 3001, host: '0.0.0.0' }, () => console.log(`Assistidos rodando na porta 3001 acesse por http://localhost:3001`))
 

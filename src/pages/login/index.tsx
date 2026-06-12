@@ -19,20 +19,23 @@ export default function Login() {
 
     async function getLogin() {
         try {
-            if (!email || !password) {
+            if (!email.trim() || !password) {
                 return Alert.alert('Atenção', 'Informe os campos obrigatórios!')
             }
 
             //pegando o retorno da api e colocando o token no async storage
-            const ret = await login(email, password);
-            if (ret.token) {
-                setToken(ret.token)
-                setUser(JSON.stringify(ret.user))
+            const res = await login(email.trim().toLowerCase(), password);
+            if (res.token) {
+                setToken(res.token)
+                setUser(JSON.stringify(res.user))
                 navigation.reset({ routes: [{ name: "BottomRoutes" }] })
             }
 
-        } catch (error) {
-            console.log(error)
+        } catch (error: any) {
+            Alert.alert(
+                'Falha no login',
+                error.message || 'Não foi possível realizar o login.'
+            );
         }
     }
 
