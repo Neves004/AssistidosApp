@@ -58,39 +58,72 @@ const chamarTipos = async () => {
     return [] as TipoMidia[];
 }
 
-const registrarTitulo = async (titleName: string, startDate: Date, endDate: Date, genre: string, note: number, comment: string, image: string, type: number) => {
+async function registrarTitulo(titleName: string, startDate: string, endDate: string, genre: string, note: string, comment: string, image: string, type: number) {
+    const formData = new FormData();
+
+    formData.append('titleName', titleName);
+    formData.append('startDate', startDate);
+    formData.append('endDate', endDate);
+    formData.append('genre', genre);
+    formData.append('note', note);
+    formData.append('comment', comment);
+    formData.append('type', String(type));
+
+    formData.append('image', {
+        uri: image,
+        name: 'photo.jpg',
+        type: 'image/jpeg',
+    } as any);
+
     const endpoint = ASSISTIDOS_API.base_url + 'titulos';
+
     const res = await fetch(endpoint, {
-        'method': 'POST',
+        method: 'POST',
         headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + await getToken(),
+            Accept: 'application/json',
+            Authorization: 'Bearer ' + await getToken(),
         },
-        'body': JSON.stringify({
-            titleName: titleName, startDate: startDate, endDate: endDate, genre: genre, note: note, comment: comment, image: image, type: type
-        })
-    })
+        body: formData,
+    });
+
     const j = await res.json();
     return j;
 }
 
-const atualizarTitulo = async (id: number, titleName: string, startDate: Date, endDate: Date, genre: string, note: number, comment: string, image: string, type: number) => {
+const atualizarTitulo = async (id: number, titleName: string, startDate: string, endDate: string, genre: string, note: number, comment: string, image: string, type: number) => {
+    const formData = new FormData();
+
+    formData.append('id', String(id));
+    formData.append('titleName', titleName);
+    formData.append('startDate', startDate);
+    formData.append('endDate', endDate);
+    formData.append('genre', genre);
+    formData.append('note', String(note));
+    formData.append('comment', comment);
+    formData.append('type', String(type));
+
+    if (image && image.startsWith('file')) {
+        formData.append('image', {
+            uri: image,
+            name: 'photo.jpg',
+            type: 'image/jpeg',
+        } as any);
+    }
+
     const endpoint = ASSISTIDOS_API.base_url + 'titulos';
+
     const res = await fetch(endpoint, {
-        'method': 'PUT',
+        method: 'PUT',
         headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + await getToken(),
+            Accept: 'application/json',
+            Authorization: 'Bearer ' + await getToken(),
+            // ❌ NÃO colocar Content-Type
         },
-        'body': JSON.stringify({
-            id: id, titleName: titleName, startDate: startDate, endDate: endDate, genre: genre, note: note, comment: comment, image: image, type: type
-        })
-    })
-    const j = await res.json();
-    return j;
-}
+        body: formData,
+    });
+
+    return await res.json();
+};
 
 const pegarTitulos = async () => {
     const endpoint = ASSISTIDOS_API.base_url + 'titulos';
@@ -167,18 +200,15 @@ const pegarPerfil = async () => {
     return null;
 }
 
-const atualizarAvatar = async (base64: string) => {
+const atualizarAvatar = async (formData: FormData) => {
     const endpoint = ASSISTIDOS_API.base_url + 'user/avatar';
 
     const res = await fetch(endpoint, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
             Authorization: 'Bearer ' + await getToken(),
         },
-        body: JSON.stringify({
-            image: base64
-        }),
+        body: formData,
     });
 
     return await res.json();

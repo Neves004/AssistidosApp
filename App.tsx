@@ -5,9 +5,11 @@ import Routes from '@/routes/index.routes';
 import { NavigationContainer } from '@react-navigation/native'
 import { CardsProvider } from '@/context/cards.context';
 import { ThemeProvider } from '@/context/ThemeContext';
+import { AuthProvider } from '@/context/auth.context';
 
 export default function App() {
   return (
+    <AuthProvider>
     <ThemeProvider>
       <NavigationContainer>
         <CardsProvider>
@@ -15,5 +17,6 @@ export default function App() {
         </CardsProvider>
       </NavigationContainer>
     </ThemeProvider>
+    </AuthProvider>
   );
 }

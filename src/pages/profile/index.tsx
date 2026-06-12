@@ -10,6 +10,7 @@ import { getUser } from "@/api/auth";
 import { Perfil } from "@/global/themes";
 import { pegarPerfil } from "@/api/endpoints";
 import { useTheme } from "@/context/ThemeContext";
+import { ASSISTIDOS_API } from "@/api/assistidos";
 
 
 export default function Profile() {
@@ -80,8 +81,6 @@ export default function Profile() {
     }
 
 
-
-
     return (
 
         <View style={styles.container}>
@@ -91,7 +90,7 @@ export default function Profile() {
                 <Image
                     source={
                         user?.avatar
-                            ? { uri: user.avatar }
+                            ? { uri: `${ASSISTIDOS_API.base_url}${user.avatar}` }
                             : require('@/assets/pfp.png')
                     }
                     style={[styles.avatar, { borderColor: tema }]}
@@ -99,7 +98,11 @@ export default function Profile() {
 
                 <MaterialIcons name='settings' size={35} color={tema} style={{ marginLeft: 320, marginTop: -20 }} onPress={() => navigation.navigate('Settings')} />
 
-                <Text style={styles.user}> @{user?.username} </Text>
+                <Text style={styles.user}>
+                    @{user?.username
+                        ? user.username.slice(0, 16) + (user.username.length > 16 ? '...' : '')
+                        : ''}
+                </Text>
 
                 <ScrollView
                     showsVerticalScrollIndicator={false}
@@ -113,10 +116,12 @@ export default function Profile() {
 
                             <View style={styles.titulo}>
                                 <Text style={[styles.tituloH, { backgroundColor: tema }]}> FILME </Text>
-                                <Image
-                                    source={{ uri: ultimoFilme?.image }}
-                                    style={styles.capa}
-                                />
+                                {ultimoFilme?.image && (
+                                    <Image
+                                        source={{ uri: `${ASSISTIDOS_API.base_url}${ultimoFilme.image}` }}
+                                        style={styles.capa}
+                                    />
+                                )}
                                 <Text style={styles.tituloText}> {nomeUltimoFilme} </Text>
                                 <Text style={styles.tituloText}> {dataUltimoFilme}</Text>
 
@@ -124,10 +129,12 @@ export default function Profile() {
 
                             <View style={styles.titulo}>
                                 <Text style={[styles.tituloH, { backgroundColor: tema }]}> SÉRIE </Text>
-                                <Image
-                                    source={{ uri: ultimaSerie?.image }}
-                                    style={styles.capa}
-                                />
+                                {ultimoFilme?.image && (
+                                    <Image
+                                        source={{ uri: `${ASSISTIDOS_API.base_url}${ultimaSerie.image}` }}
+                                        style={styles.capa}
+                                    />
+                                )}
                                 <Text style={styles.tituloText}> {nomeUltimaSerie}</Text>
                                 <Text style={styles.tituloText}> {dataUltimaSerie}</Text>
 
@@ -135,10 +142,12 @@ export default function Profile() {
 
                             <View style={styles.titulo}>
                                 <Text style={[styles.tituloH, { backgroundColor: tema }]}> ANIME </Text>
-                                <Image
-                                    source={{ uri: ultimoAnime?.image }}
-                                    style={styles.capa}
-                                />
+                                {ultimoFilme?.image && (
+                                    <Image
+                                        source={{ uri: `${ASSISTIDOS_API.base_url}${ultimoAnime.image}` }}
+                                        style={styles.capa}
+                                    />
+                                )}
                                 <Text style={styles.tituloText}> {nomeUltimoAnime}</Text>
                                 <Text style={styles.tituloText}> {dataUltimoAnime}</Text>
 

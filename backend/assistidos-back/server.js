@@ -14,6 +14,7 @@ import { Usuario } from "./entity/Usuario.js";
 import { Titulo } from "./entity/Titulo.js";
 import { Tipo } from "./entity/Tipo.js";
 import { Like } from 'typeorm';
+import multer from "multer";
 
 
 AppDataSource.initialize().then(() => {
@@ -32,6 +33,17 @@ const BCRYPT_ROUNDS = 10;
 //Pasta para uploads
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join(dirname, 'uploads'));
+    },
+    filename: (req, file, cb) => {
+        const uniqueName = uuidv4() + path.extname(file.originalname);
+        cb(null, uniqueName);
+    }
+});
+const upload = multer({ storage });
+
 //Garante que a pasta existe
 fs.mkdirSync(path.join(dirname, 'uploads'), { recursive: true });
 
@@ -175,16 +187,42 @@ app.post('/login', async (req, res) => {
 });
 
 
-
 //Inserindo os titulos no BD
-app.post('/titulos', verifyBearer, async (req, res) => {
-    const { titleName, startDate, endDate, genre, note, comment, image, type } = req.body;
-    console.log(req.user);
-    const result = await tituloRepo.insert({
-        titleName, startDate, endDate, genre, note, comment, image, type, user: req.user.id
-    });
-    res.status(200).json({ message: 'Título registrado com sucesso' })
-})
+app.post('/titulos', verifyBearer, upload.single('image'), async (req, res) => {
+    try {
+        const { titleName, startDate, endDate, genre, note, comment, type } = req.body;
+
+        const fileUrl = req.file
+            ? `uploads/${req.file.filename}`
+            : null;
+
+        if (!fileUrl) {
+            return res.status(400).json({ message: 'Imagem obrigatória' });
+        }
+
+        if (endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            if (start.valueOf() > end.valueOf()) {
+                return res.status(400).json({
+                    message: 'Data final deveria ser posterior à inicial'
+                });
+            }
+        }
+
+        await tituloRepo.insert({ titleName, startDate, endDate, genre, note, comment, image: fileUrl, type, user: req.user.id });
+
+        return res.status(200).json({
+            message: 'Título registrado com sucesso'
+        });
+
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: 'Erro interno' });
+    }
+});
+
 
 //Pegando o tipo
 app.get('/tipos', verifyBearer, async (req, res) => {
@@ -194,27 +232,84 @@ app.get('/tipos', verifyBearer, async (req, res) => {
 
 //Pegando as informações do titulo
 app.get('/titulos', verifyBearer, async (req, res) => {
-    const result = await tituloRepo.find({ relations: { 'user': true, 'type': true }, where: { 'user': req.user.id } });
-    res.status(200).json(result);
-})
+    const { query, type, sort } = req.query;
+
+    const qb = tituloRepo.createQueryBuilder('t')
+        .leftJoinAndSelect('t.user', 'user')
+        .leftJoinAndSelect('t.type', 'type')
+        .where('user.id = :userId', { userId: req.user.id });
+
+    // BUSCA (texto)
+    if (query) {
+        qb.andWhere(
+            `(t.titleName LIKE :q OR t.genre LIKE :q OR t.comment LIKE :q)`,
+            { q: `%${query}%` }
+        );
+    }
+
+    // FILTRO POR TIPO
+    if (type && type !== 'Todos') {
+        qb.andWhere('type.id = :type', { type: Number(type) });
+    }
+
+    // ORDENAÇÃO
+    switch (sort) {
+        case 'highest':
+            qb.orderBy('t.note', 'DESC');
+            break;
+
+        case 'lowest':
+            qb.orderBy('t.note', 'ASC');
+            break;
+
+        case 'old':
+            qb.orderBy('t.startDate', 'ASC');
+            break;
+
+        default:
+            qb.orderBy('t.startDate', 'DESC');
+            break;
+    }
+
+    const result = await qb.getMany();
+
+    return res.status(200).json(result);
+});
 
 //Atualizando as informações do titulo
-app.put('/titulos', verifyBearer, async (req, res) => {
-    const { id, titleName, startDate, endDate, genre, note, comment, image, type } = req.body;
+app.put('/titulos', verifyBearer, upload.single('image'), async (req, res) => {
+    const { id, titleName, startDate, endDate, genre, note, comment, type } = req.body;
 
-    const titulo = await tituloRepo.findOne({ relations: { 'user': true, 'type': true }, where: { id } });
+    const titulo = await tituloRepo.findOne({
+        relations: { user: true, type: true },
+        where: { id }
+    });
 
-    if (titulo['user']['id'] == req.user.id) {
-        const newType = await tipoRepo.findOneBy({ id: type });
-
-        const result = await tituloRepo.update({ id }, {
-            titleName, startDate, endDate: (newType.canHaveEndDate ? endDate : null), genre, note, comment, image, type
-        });
-        res.status(200).json({ message: 'Título atualizado com sucesso' })
+    if (titulo.user.id != req.user.id) {
+        return res.status(401).json({ message: 'Sem permissão' });
     }
-    res.status(401).json({ message: 'Sem permissão' });
-})
 
+    const newType = await tipoRepo.findOneBy({ id: type });
+
+    if (endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        if (start.valueOf() > end.valueOf()) {
+            return res.status(400).json({
+                message: 'Data final deveria ser posterior à data inicial'
+            });
+        }
+    }
+
+    const fileUrl = req.file
+        ? `uploads/${req.file.filename}`
+        : titulo.image;
+
+    await tituloRepo.update({ id }, { titleName, startDate, endDate: (newType.canHaveEndDate ? endDate : null), genre, note, comment, image: fileUrl, type });
+
+    return res.status(200).json({ message: 'Título atualizado com sucesso' });
+});
 
 //Apagando titulo
 app.delete('/titulos/:id', verifyBearer, async (req, res) => {
@@ -222,6 +317,7 @@ app.delete('/titulos/:id', verifyBearer, async (req, res) => {
 
     const titulo = await tituloRepo.findOne({ relations: { 'user': true }, where: { id } });
     if (titulo['user']['id'] == req.user.id) {
+        fs.rmSync(titulo.image);
         const result = await tituloRepo.delete({ id });
         res.status(202).json({ message: 'Titulo apagado com sucesso' })
         return;
@@ -424,36 +520,27 @@ app.get('/perfil', verifyBearer, async (req, res) => {
 
 
 //Pegando o Avatar
-app.post('/user/avatar', verifyBearer, async (req, res) => {
+app.post('/user/avatar', verifyBearer, upload.single('image'), async (req, res) => {
     try {
-        const { image } = req.body;
-        if (!image) {
+        if (!req.file) {
             return res.status(400).json({ message: 'Imagem não enviada' });
         }
 
-        const base64 = image.replace(/^data:image\/\w+;base64,/, '');
-        const buffer = Buffer.from(base64, 'base64');
-        const filename = uuidv4() + '.png';
-        const filePath = path.join(dirname, 'uploads', filename);
-
-        fs.writeFileSync(filePath, buffer);
-
-        const BASE_URL = process.env.BASE_URL;
-        const fileUrl = `${BASE_URL}/uploads/${filename}`;
+        const fileUrl = `uploads/${req.file.filename}`;
 
         await usuarioRepo.update(
             { id: req.user.id },
             { avatar: fileUrl }
         );
 
-        res.status(200).json({
+        return res.status(200).json({
             message: 'Avatar salvo com sucesso',
             avatar: fileUrl
         });
 
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: 'Erro ao salvar imagem' });
+        return res.status(500).json({ message: 'Erro ao salvar imagem' });
     }
 });
 

@@ -1,51 +1,29 @@
-import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
-import Login from "../pages/login";
-import BottomRoutes from "./bottom.routes";
-import NewTitle from "@/pages/newTitle";
-import Register from "@/pages/register";
-import Settings from "@/pages/settings";
+import { useEffect, useState } from 'react';
+import AuthRoutes from './auth.routes';
+import AppRoutes from './app.routes';
+import { getToken } from '@/api/auth';
+import { useAuth } from '@/context/auth.context';
 
 export default function Routes() {
-    const Stack = createStackNavigator()
+const { signed, setSigned } = useAuth();    
+const [loading, setLoading] = useState(true);
 
-    return (
-        <Stack.Navigator
-            initialRouteName="Login"
-            screenOptions={{
-                headerShown: false,
-                cardStyle: {
-                    backgroundColor: '#1f2937'
-                }
-            }}
-        >
-            <Stack.Screen
-                name='Register'
-                component={Register}
-            />
+    useEffect(() => {
+        verificarLogin();
+    }, []);
 
-            <Stack.Screen
-                name='Login'
-                component={Login}
-            />
+    async function verificarLogin() {
+        const token = await getToken();
 
-            <Stack.Screen
-                name='BottomRoutes'
-                component={BottomRoutes}
-            />
+        setSigned(!!token);
+        setLoading(false);
+    }
 
-            <Stack.Screen
-                name='NewTitle'
-                component={NewTitle}
-            />
-            
-            <Stack.Screen
-                name='Settings'
-                component={Settings}
-            />
+    if (loading) {
+        return null;
+    }
 
-        </Stack.Navigator>
-
-    )
-
+    return signed
+        ? <AppRoutes />
+        : <AuthRoutes />;
 }

@@ -28,4 +28,8 @@ const getTheme = async () => {
     return await AsyncStorage.getItem('@theme');
 }
 
-export { getToken, setToken, getUser, setUser, saveTheme, getTheme };
+const logout = async () => {
+    await AsyncStorage.multiRemove(['@assistidos:usertoken', '@assistidos:user']);
+}
+
+export { getToken, setToken, getUser, setUser, saveTheme, getTheme, logout};

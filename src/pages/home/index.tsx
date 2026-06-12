@@ -6,10 +6,11 @@ import { Feather, Octicons } from '@expo/vector-icons';
 import { Card, CardType } from '@/components/Card';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { TipoMidia } from "@/global/themes";
 import { useCards } from '@/context/cards.context';
-import { pegarTitulos, pesquisarTitulo } from "@/api/endpoints";
+import { getToken } from "@/api/auth";
 import { useTheme } from "@/context/ThemeContext";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ASSISTIDOS_API } from "@/api/assistidos";
 
 // type tmdbType = {
 //     poster_path: string;
@@ -22,8 +23,7 @@ export default function Home() {
 
     const [query, setQuery] = useState('');
 
-    const [filterType, setFilterType] =
-        useState<TipoMidia | 'Todos'>('Todos');
+    const [filterType, setFilterType] = useState<number | 'Todos'>('Todos');
 
     const [sortBy, setSortBy] =
         useState<
@@ -33,24 +33,13 @@ export default function Home() {
             'lowest'
         >('recent');
 
-
     useEffect(() => {
-        pegarTitulos().then((v) => {
-            setCards(v);
-        });
-    }, []);
+        const timer = setTimeout(() => {
+            carregarTitulos();
+        }, 300);
 
-    useEffect(() => {
-        const intervalId = setTimeout(() => {
-            pesquisarTitulo(query).then((v) => {
-                setCards(v);
-            })
-        }, 100);
-        return () => {
-            clearTimeout(intervalId);
-        }
-    }, [query]);
-
+        return () => clearTimeout(timer);
+    }, [query, filterType, sortBy]);
 
 
     // async function buscarPosters(query: string) {
@@ -97,11 +86,19 @@ export default function Home() {
     type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
     const navigation = useNavigation<NavigationProp>();
 
-    navigation.addListener('focus', () => {
-        pegarTitulos().then((v) => {
-            setCards(v);
-        });
-    })
+    async function carregarTitulos() {
+        const res = await fetch(
+            `${ASSISTIDOS_API.base_url}titulos?query=${query}&type=${filterType === 'Todos' ? '' : filterType}&sort=${sortBy}`,
+            {
+                headers: {
+                    Authorization: 'Bearer ' + await getToken()
+                }
+            }
+        );
+
+        const data = await res.json();
+        setCards(data);
+    }
 
     function handleDelete(id: string) {
         Alert.alert('Você tem certeza de que deseja apagar?', 'Essa ação é irreversível',
@@ -117,55 +114,8 @@ export default function Home() {
         });
     }
 
-    {/* FILTROS */ }
-    const filteredData = cards
-
-        .filter((item) => {
-            if (filterType === 'Todos') {
-                return true;
-            }
-            return item.type === filterType;
-        })
-
-        .sort((a, b) => {
-            switch (sortBy) {
-                case 'highest':
-                    return b.note - a.note;
-                case 'lowest':
-                    return a.note - b.note;
-                case 'recent':
-                    return (
-                        new Date(
-                            a.startDate.split('/').reverse().join('-')
-                        ).getTime()
-                        -
-                        new Date(
-                            b.startDate.split('/').reverse().join('-')
-                        ).getTime()
-                    ) * -1;
-
-                case 'old':
-                    return (
-                        new Date(
-                            a.startDate.split('/').reverse().join('-')
-                        ).getTime()
-
-                        -
-
-                        new Date(
-                            b.startDate.split('/').reverse().join('-')
-                        ).getTime()
-                    );
-
-                default:
-                    return 0;
-            }
-        });
-
-    {/* FIM FILTROS */ }
-
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <View style={styles.boxTop}>
                 <View style={styles.initial}>
                     <Text style={styles.text}>
@@ -202,7 +152,7 @@ export default function Home() {
 
             <View style={styles.boxBottom}>
                 <FlatList
-                    data={filteredData}
+                    data={cards}
                     style={{ marginTop: 40, paddingHorizontal: 30 }}
                     keyExtractor={(item) => item.id}
                     ItemSeparatorComponent={() => (
@@ -228,37 +178,34 @@ export default function Home() {
 
                         <View style={styles.filterRow}>
 
-                            {
-                                ['Todos', 'Filme', 'Série', 'Anime']
-                                    .map((item) => (
+                            {[
+                                { id: 'Todos', label: 'Todos' },
+                                { id: 1, label: 'Filme' },
+                                { id: 2, label: 'Série' },
+                                { id: 3, label: 'Anime' }
+                            ].map((item) => (
 
-                                        <TouchableOpacity
-                                            key={item}
-
-                                            style={[
-                                                styles.filterButton,
-                                                filterType === item && { backgroundColor: tema, borderColor: tema },
-
-                                            ]}
-
-                                            onPress={() =>
-                                                setFilterType(item as any)
-                                            }
-                                        >
-
-                                            <Text
-                                                style={[
-                                                    styles.filterText,
-
-                                                    filterType === item &&
-                                                    styles.filterTextActive
-                                                ]}
-                                            >
-                                                {item}
-                                            </Text>
-
-                                        </TouchableOpacity>
-                                    ))
+                                <TouchableOpacity
+                                    key={item.label}
+                                    onPress={() => setFilterType(item.id as number | 'Todos')}
+                                    style={[
+                                        styles.filterButton,
+                                        filterType === item.id && {
+                                            backgroundColor: tema,
+                                            borderColor: tema
+                                        }
+                                    ]}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.filterText,
+                                            filterType === item.id && styles.filterTextActive
+                                        ]}
+                                    >
+                                        {item.label}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))
                             }
 
                         </View>
@@ -319,7 +266,7 @@ export default function Home() {
                                     styles.orderButton,
 
                                     sortBy === 'highest' &&
-                                    {borderColor:tema,borderWidth: 1,}
+                                    { borderColor: tema, borderWidth: 1, }
                                 ]}
                                 onPress={() => setSortBy('highest')}
                             >
@@ -341,7 +288,7 @@ export default function Home() {
                                     styles.orderButton,
 
                                     sortBy === 'lowest' &&
-                                    {borderColor:tema,borderWidth: 1,}
+                                    { borderColor: tema, borderWidth: 1, }
                                 ]}
                                 onPress={() => setSortBy('lowest')}
                             >
@@ -363,7 +310,7 @@ export default function Home() {
                 </View>
             </Modal>
 
-        </View>
+        </SafeAreaView>
 
 
     )

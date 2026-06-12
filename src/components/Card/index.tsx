@@ -4,6 +4,7 @@ import { MaterialIcons, Octicons } from '@expo/vector-icons';
 import { TipoMidia } from "@/global/themes";
 import { Image } from 'react-native';
 import { useTheme } from "@/context/ThemeContext";
+import { ASSISTIDOS_API } from "@/api/assistidos";
 
 type Props = TouchableOpacityProps & {
     card: CardType;
@@ -67,7 +68,7 @@ export function Card({ card, onDelete, onEdit }: Props) {
 
                 {/* CAPA */}
                 <Image
-                    source={{ uri: card.image }}
+                    source={{ uri: `${ASSISTIDOS_API.base_url}${card.image}` }}
                     style={styles.capa}
                 />
 

@@ -35,7 +35,7 @@ export type NavigationProp =
 
 
 export default function NewTitle() {
-    const {tema} = useTheme();
+    const { tema } = useTheme();
     const route = useRoute<any>();
     const editItem = route.params?.editItem;
     const isEditing = !!editItem;
@@ -57,14 +57,13 @@ export default function NewTitle() {
         const permission =
             await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-        if (!permission.granted) {
-            return;
-        }
+        if (!permission.granted) return;
+
         const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ['images'],
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [2, 3],
-            quality: 1,
+            quality: 0.7,
         });
 
         if (!result.canceled) {
@@ -94,6 +93,7 @@ export default function NewTitle() {
                 );
             }
 
+
             if (
                 type.canHaveEndDate &&
                 endDate &&
@@ -103,6 +103,15 @@ export default function NewTitle() {
                     'Data inválida',
                     'Digite a data final corretamente.'
                 );
+            }
+
+            if (endDate) {
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                if (start.valueOf() > end.valueOf()) {
+                    Alert.alert('Data inválida', 'A data final deveria ser posterior ou igual à data inicial');
+                    return false;
+                }
             }
 
 
@@ -150,7 +159,7 @@ export default function NewTitle() {
 
                     <View style={styles.container}>
 
-                        <TouchableOpacity activeOpacity={0.7} style={[styles.buttonArrow, {backgroundColor:tema}]} onPress={() => navigation.goBack()}>
+                        <TouchableOpacity activeOpacity={0.7} style={[styles.buttonArrow, { backgroundColor: tema }]} onPress={() => navigation.goBack()}>
                             <Ionicons
                                 name='chevron-back-outline'
                                 style={styles.arrow}
@@ -249,7 +258,7 @@ export default function NewTitle() {
 
                         </View>
 
-                        <TouchableOpacity activeOpacity={0.7} style={[styles.buttonAdd, {backgroundColor:tema}]} onPress={handleAdd} >
+                        <TouchableOpacity activeOpacity={0.7} style={[styles.buttonAdd, { backgroundColor: tema }]} onPress={handleAdd} >
                             <MaterialIcons
                                 name={isEditing ? 'edit' : 'add'}
                                 size={22}

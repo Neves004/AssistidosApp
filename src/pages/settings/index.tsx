@@ -9,12 +9,15 @@ import { useTheme } from "@/context/ThemeContext";
 
 import * as ImagePicker from 'expo-image-picker';
 import { atualizarAvatar, atualizarUsername, limparDados } from "@/api/endpoints";
-import { getUser, setUser } from "@/api/auth";
+import { getUser, setUser, setToken, logout } from "@/api/auth";
 import { AppModal } from "@/components/AppModal";
 import { Alert, TextInput } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from '@/context/auth.context';
 
 export default function Settings() {
     const navigation = useNavigation<NavigationProp>();
+    const { setSigned } = useAuth();
     const { tema, setTema } = useTheme();
 
     const [showColors, setShowColors] = useState(false);
@@ -38,25 +41,27 @@ export default function Settings() {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             quality: 0.5,
-            base64: true,
         });
 
         if (!result.canceled && result.assets?.length > 0) {
-            const base64 = result.assets[0].base64;
+            const imageUri = result.assets[0].uri;
 
-            const res = await atualizarAvatar(
-                `data:image/jpeg;base64,${base64}`
-            );
+            const formData = new FormData();
 
-            // Atualiza o usuário salvo localmente
+            formData.append('image', {
+                uri: imageUri,
+                name: 'avatar.jpg',
+                type: 'image/jpeg',
+            } as any);
+
+            const res = await atualizarAvatar(formData);
+
             if (res?.avatar) {
                 const userString = await getUser();
 
                 if (userString) {
                     const user = JSON.parse(userString);
-
                     user.avatar = res.avatar;
-
                     await setUser(JSON.stringify(user));
                 }
             }
@@ -123,6 +128,16 @@ export default function Settings() {
         }
     };
 
+    const sairDaConta = async () => {
+        await AsyncStorage.removeItem('token');
+        await AsyncStorage.removeItem('user');
+
+        await setToken('');
+        await setUser('');
+
+        setSigned(false);
+    };
+
 
     return (
         <View style={styles.container}>
@@ -140,9 +155,39 @@ export default function Settings() {
 
                 <View>
 
+                    <Text style={[styles.sessao, { color: tema }]}>Conta</Text>
+
+                    <View style={{
+                        backgroundColor: '#1f2937',
+                        borderRadius: 15,
+                        overflow: 'hidden',
+                    }}>
+                        <TouchableOpacity style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}
+                            onPress={escolherFoto}>
+                            <MaterialIcons name='person' size={22} color='#f8e9e9' />
+                            <Text style={styles.text}>Alterar foto de perfil</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}
+                            onPress={() => setShowUsernameModal(true)}>
+                            <MaterialIcons name='create' size={22} color='#f8e9e9' />
+                            <Text style={styles.textUser}>Mudar nome de usuário</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}
+                            onPress={sairDaConta}>
+                            <MaterialIcons name="logout" size={22} color={tema} />
+                            <Text style={styles.text}>Sair da Conta</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.separador} />
+
+
+                    <Text style={[styles.sessao, { color: tema }]}>Aplicativo </Text>
+
                     <TouchableOpacity style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}
-                        onPress={() => setShowColors(true)}
-                    >
+                        onPress={() => setShowColors(true)}>
                         <MaterialIcons name='palette' size={22} color='#f8e9e9' />
                         <Text style={styles.text}>Cor tema: </Text>
                         <View style={{
@@ -152,22 +197,17 @@ export default function Settings() {
                         }} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={escolherFoto} style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
-                        <MaterialIcons name='person' size={22} color='#f8e9e9' />
-                        <Text style={styles.text}>Alterar foto de perfil</Text>
+                    <View style={styles.separador} />
 
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }} onPress={() => setShowUsernameModal(true)}>
-                        <MaterialIcons name='create' size={22} color='#f8e9e9' />
-                        <Text style={styles.textUser}>Mudar nome de usuário</Text>
-                    </TouchableOpacity>
+                    <Text style={[styles.sessao, { color: tema }]}>Dados</Text>
 
                     <TouchableOpacity style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }} onPress={() => setShowDeleteModal(true)}>
                         <Ionicons name='trash' size={22} color='#fa6767' />
                         <Text style={styles.textClear}>Limpar dados</Text>
                     </TouchableOpacity>
                 </View>
+
+                {/* MODAIS AQUI */}
 
                 <AppModal
                     visible={showColors}

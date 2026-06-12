@@ -1,8 +1,7 @@
 import React from 'react';
 import { Text, TouchableOpacity, View, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import * as FileSystem from 'expo-file-system';
-import * as ImagePicker from 'expo-image-picker';
+import { ASSISTIDOS_API } from '@/api/assistidos';
 
 import { styles } from '@/components/ImagePickerCard/styles';
 import { useTheme } from '@/context/ThemeContext';
@@ -17,7 +16,7 @@ export function ImagePickerCard({
     onPress
 }: Props) {
 
-    const {tema} = useTheme();
+    const { tema } = useTheme();
 
     return (
 
@@ -32,7 +31,11 @@ export function ImagePickerCard({
                     image ?
 
                         <Image
-                            source={{ uri: image }}
+                            source={{
+                                uri: image.startsWith('file')
+                                    ? image
+                                    : `${ASSISTIDOS_API.base_url}${image}`
+                            }}
                             style={styles.image}
                         />
 
@@ -42,7 +45,7 @@ export function ImagePickerCard({
                         <Ionicons
                             name='image-outline'
                             size={30}
-                            color= {tema}
+                            color={tema}
                         />
 
                 }

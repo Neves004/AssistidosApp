@@ -29,6 +29,21 @@ export const styles = StyleSheet.create({
         marginLeft: 20,
     },
 
+    sessao: {
+        fontSize: 13,
+        fontWeight: 'bold',
+        letterSpacing: 1,
+        marginTop: 25,
+        marginBottom: 10,
+        textTransform: 'uppercase',
+    },
+
+    separador: {
+        height: 1,
+        backgroundColor: '#2d3645',
+        marginTop:15,
+    },
+
     text: {
         color: themes.text,
         fontSize: 22,

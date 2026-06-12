@@ -8,10 +8,13 @@ import { Button } from '@/components/Button';
 import { useNavigation, NavigationProp } from '@react-navigation/native'
 import { login } from '@/api/endpoints';
 import { setToken, setUser } from '@/api/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from '@/context/auth.context';
 
 export default function Login() {
 
     const navigation = useNavigation<NavigationProp<any>>();
+    const { setSigned } = useAuth();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -28,7 +31,7 @@ export default function Login() {
             if (res.token) {
                 setToken(res.token)
                 setUser(JSON.stringify(res.user))
-                navigation.reset({ routes: [{ name: "BottomRoutes" }] })
+                setSigned(true);
             }
 
         } catch (error: any) {
