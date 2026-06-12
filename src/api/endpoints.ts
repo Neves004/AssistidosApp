@@ -209,7 +209,7 @@ const atualizarUsername = async (username: string) => {
 }
 
 async function limparDados() {
-    const endpoint = ASSISTIDOS_API.base_url + 'titles';
+    const endpoint = ASSISTIDOS_API.base_url + 'titulos';
     const res = await fetch(endpoint, {
         method: 'DELETE',
         headers: {
@@ -217,12 +217,13 @@ async function limparDados() {
         },
     });
 
+    const text = await res.text();
+
     const json = await res.json();
 
     if (!res.ok) {
         throw new Error(json.message);
     }
-
     return json;
 }
 

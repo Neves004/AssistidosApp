@@ -110,10 +110,9 @@ export default function Settings() {
             const res = await limparDados();
 
             Alert.alert(
-                'Sucesso',
-                res.message
+                'Dados removidos',
+                'Todos os filmes, séries, animes, estatísticas e histórico foram apagados com sucesso.'
             );
-
             setShowDeleteModal(false);
 
         } catch (error: any) {
