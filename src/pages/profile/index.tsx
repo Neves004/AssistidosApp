@@ -118,7 +118,7 @@ export default function Profile() {
                                 <Text style={[styles.tituloH, { backgroundColor: tema }]}> FILME </Text>
                                 {ultimoFilme?.image && (
                                     <Image
-                                        source={{ uri: `${ASSISTIDOS_API.base_url}${ultimoFilme.image}` }}
+                                        source={{ uri: `${ASSISTIDOS_API.base_url}${ultimoFilme?.image}` }}
                                         style={styles.capa}
                                     />
                                 )}
@@ -131,7 +131,7 @@ export default function Profile() {
                                 <Text style={[styles.tituloH, { backgroundColor: tema }]}> SÉRIE </Text>
                                 {ultimoFilme?.image && (
                                     <Image
-                                        source={{ uri: `${ASSISTIDOS_API.base_url}${ultimaSerie.image}` }}
+                                        source={{ uri: `${ASSISTIDOS_API.base_url}${ultimaSerie?.image}` }}
                                         style={styles.capa}
                                     />
                                 )}
@@ -144,7 +144,7 @@ export default function Profile() {
                                 <Text style={[styles.tituloH, { backgroundColor: tema }]}> ANIME </Text>
                                 {ultimoFilme?.image && (
                                     <Image
-                                        source={{ uri: `${ASSISTIDOS_API.base_url}${ultimoAnime.image}` }}
+                                        source={{ uri: `${ASSISTIDOS_API.base_url}${ultimoAnime?.image}` }}
                                         style={styles.capa}
                                     />
                                 )}
@@ -171,7 +171,7 @@ export default function Profile() {
                         <View>
                             <Text style={[styles.tituloD, { backgroundColor: tema }]}> Filmes </Text>
                             <Text style={styles.text}> Assistidos: {filmesAssistidos} </Text>
-                            <Text style={styles.text}> Gênero Favorito:{filmesGeneroFavorito} </Text>
+                            <Text style={styles.text}> Gênero Favorito: {filmesGeneroFavorito} </Text>
                             <Text style={styles.text}> Média de Notas: {filmesMediaNotas}</Text>
                             <View style={styles.separador} />
                         </View>
@@ -190,7 +190,7 @@ export default function Profile() {
                         <View>
                             <Text style={[styles.tituloD, { backgroundColor: tema }]}> Animes </Text>
                             <Text style={styles.text}> Assistidos: {animesAssistidos} </Text>
-                            <Text style={styles.text}> Gênero Favorito:{animesGeneroFavorito} </Text>
+                            <Text style={styles.text}> Gênero Favorito: {animesGeneroFavorito} </Text>
                             <Text style={styles.text}> Média de Notas: {animesMediaNotas} </Text>
                         </View>
 
