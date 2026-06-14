@@ -247,8 +247,6 @@ async function limparDados() {
         },
     });
 
-    const text = await res.text();
-
     const json = await res.json();
 
     if (!res.ok) {
@@ -257,8 +255,103 @@ async function limparDados() {
     return json;
 }
 
+async function getDashboard() {
+    const endpoint = ASSISTIDOS_API.base_url + 'admin/dashboard';
+    const res = await fetch(endpoint, {
+        method: 'GET',
+        headers: {
+            Authorization: 'Bearer ' + await getToken(),
+        },
+    });
+
+    const j = await res.json();
+
+    if (!res.ok) {
+        throw new Error(j.message);
+    }
+    return j;
+}
+
+async function getTopUsuarios() {
+    const endpoint = ASSISTIDOS_API.base_url + 'admin/top-users';
+    const res = await fetch(endpoint, {
+        method: 'GET',
+        headers: {
+            Authorization: 'Bearer ' + await getToken(),
+        },
+    });
+
+    const j = await res.json();
+
+    if (!res.ok) {
+        throw new Error(j.message);
+    }
+    return j;
+}
+
+async function getUsers() {
+    const endpoint =
+        ASSISTIDOS_API.base_url + 'admin/users';
+
+    const res = await fetch(endpoint, {
+        method: 'GET',
+        headers: {
+            Authorization: 'Bearer ' + await getToken(),
+        },
+    });
+
+    const j = await res.json();
+
+    if (!res.ok) {
+        throw new Error(j.message);
+    }
+
+    return j;
+}
+
+async function getUserDetails(id: number) {
+    const endpoint =
+        ASSISTIDOS_API.base_url + `admin/users/${id}`;
+
+    const res = await fetch(endpoint, {
+        method: 'GET',
+        headers: {
+            Authorization: 'Bearer ' + await getToken(),
+        },
+    });
+
+    const j = await res.json();
+
+    if (!res.ok) {
+        throw new Error(j.message);
+    }
+
+    return j;
+}
+
+async function deleteAccount(id: number) {
+    const endpoint = ASSISTIDOS_API.base_url + 'admin/users/' + id;
+
+    const res = await fetch(endpoint, {
+        method: 'DELETE',
+        headers: {
+            Authorization: 'Bearer ' + await getToken(),
+        },
+    });
+
+    const j = await res.json();
+
+    console.log('DELETE RESPONSE:', res.status, j);
+
+    if (!res.ok) {
+        throw new Error(j.message || 'Erro ao deletar conta');
+    }
+    return j;
+}
+
+
 //Exportando as funções
 export {
     register, login, chamarTipos, registrarTitulo, atualizarTitulo, pegarTitulos, apagarTitulo, pesquisarTitulo, pegarPerfil,
-    atualizarAvatar, atualizarUsername, limparDados
+    atualizarAvatar, atualizarUsername, limparDados, getDashboard, getTopUsuarios, getUsers, getUserDetails, deleteAccount
 }

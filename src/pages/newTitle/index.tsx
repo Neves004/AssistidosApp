@@ -6,7 +6,6 @@ import { Input } from '@/components/Input';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { ImagePickerCard } from '@/components/ImagePickerCard';
-import 'react-native-get-random-values';
 import { CardType } from '@/components/Card';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MaterialIcons } from '@expo/vector-icons';

@@ -77,6 +77,23 @@ const verifyBearer = (req, res, next) => {
     }
 }
 
+const verifyAdmin = (req, res, next) => {
+    console.log('USER:', req.user);
+    if (req.user) {
+        if (req.user.role) {
+            if (req.user.role === 'superadmin') {
+                next();
+            } else {
+                res.status(401).json({ message: 'Não autorizado' });
+            }
+        } else {
+            res.status(401).json({ message: 'Não autorizado' });
+        }
+    } else {
+        res.status(401).json({ message: 'Não autorizado' });
+    }
+}
+
 
 //Autenticação
 app.post('/register', async (req, res) => {
@@ -132,11 +149,11 @@ app.post('/register', async (req, res) => {
         });
 
         const user = await usuarioRepo.findOneBy({ email });
-        const token = jwt.sign({ id: user.id, username: user.username, email: user.email }, JWT_SECRET, {
+        const token = jwt.sign({ id: user.id, username: user.username, email: user.email, role: user.role }, JWT_SECRET, {
             expiresIn: '7d'
         });
 
-        res.status(200).json({ message: 'Registrado com sucesso', token })
+        res.status(200).json({ message: 'Registrado com sucesso', token, user: { id: user.id, username: user.username, email: user.email, avatar: user.avatar, role: user.role } })
 
     } catch (error) {
         console.log(error);
@@ -171,10 +188,16 @@ app.post('/login', async (req, res) => {
             });
         }
 
-        const token = jwt.sign({ id: user.id, username: user.username, email: user.email }, JWT_SECRET, {
+        //att última atvvd
+        await usuarioRepo.update(
+            { id: user.id },
+            { last_login: new Date() }
+        );
+
+        const token = jwt.sign({ id: user.id, username: user.username, email: user.email, role: user.role }, JWT_SECRET, {
             expiresIn: '7d'
         });
-        res.status(200).json({ message: 'Logado com sucesso', token, user: { id: user.id, username: user.username, email: user.email, avatar: user.avatar } });
+        res.status(200).json({ message: 'Logado com sucesso', token, user: { id: user.id, username: user.username, email: user.email, avatar: user.avatar, role: user.role } });
 
     } catch (error) {
         console.log(error);
@@ -229,6 +252,8 @@ app.get('/tipos', verifyBearer, async (req, res) => {
     const result = await tipoRepo.find();
     res.status(200).json(result)
 })
+
+
 
 //Pegando as informações do titulo
 app.get('/titulos', verifyBearer, async (req, res) => {
@@ -575,6 +600,379 @@ app.delete('/titulos', verifyBearer, async (req, res) => {
     }
 });
 
+
+/* ROTAS SUPERADMIN */
+app.get('/admin/dashboard', verifyBearer, verifyAdmin, async (req, res) => {
+    try {
+
+        const usuarios = await usuarioRepo.count();
+        const titulos = await tituloRepo.count();
+
+        const filmes = await tituloRepo.count({
+            relations: {
+                type: true
+            },
+            where: {
+                type: {
+                    id: 1
+                }
+            }
+        });
+
+        const series = await tituloRepo.count({
+            relations: {
+                type: true
+            },
+            where: {
+                type: {
+                    id: 2
+                }
+            }
+        });
+
+        const animes = await tituloRepo.count({
+            relations: {
+                type: true
+            },
+            where: {
+                type: {
+                    id: 3
+                }
+            }
+        });
+
+        const listaTitulos = await tituloRepo.find({
+            relations: {
+                type: true
+            }
+        });
+
+        // ===== GÊNERO FAVORITO =====
+
+        const generos = {};
+
+        listaTitulos.forEach(titulo => {
+            const genero = titulo.genre;
+
+            if (!generos[genero]) {
+                generos[genero] = 0;
+            }
+
+            generos[genero]++;
+        });
+
+        let generoFavorito = 'Nenhum';
+        let maiorQuantidade = 0;
+
+        Object.entries(generos).forEach(
+            ([genero, quantidade]) => {
+
+                if (quantidade > maiorQuantidade) {
+                    maiorQuantidade = quantidade;
+                    generoFavorito = genero;
+                }
+            }
+        );
+
+        // ===== TIPO FAVORITO =====
+
+        let tipoFavorito = 'Nenhum';
+        let maiorTipo = 0;
+
+        if (filmes > maiorTipo) {
+            maiorTipo = filmes;
+            tipoFavorito = 'Filmes';
+        }
+
+        if (series > maiorTipo) {
+            maiorTipo = series;
+            tipoFavorito = 'Séries';
+        }
+
+        if (animes > maiorTipo) {
+            maiorTipo = animes;
+            tipoFavorito = 'Animes';
+        }
+
+        return res.json({
+            usuarios,
+            titulos,
+            filmes,
+            series,
+            animes,
+            generoFavorito,
+            tipoFavorito
+        });
+
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({
+            message: 'Erro ao gerar dashboard'
+        });
+    }
+});
+
+app.get('/admin/top-users', verifyBearer, verifyAdmin, async (req, res) => {
+    try {
+        // const usuarios = await usuarioRepo.find();
+
+        // const ranking = [];
+
+        // for (const usuario of usuarios) {
+
+        //     const quantidadeTitulos = await tituloRepo.count({
+        //         relations: {
+        //             user: true
+        //         },
+        //         where: {
+        //             user: {
+        //                 id: usuario.id
+        //             }
+        //         },
+        //         'order': 'DESC',
+        //         'take': 5
+        //     });
+
+        //     ranking.push({
+        //         id: usuario.id,
+        //         username: usuario.username,
+        //         avatar: usuario.avatar,
+        //         totalTitulos: quantidadeTitulos
+        //     });
+        // }
+
+        // ranking.sort(
+        //     (a, b) => b.totalTitulos - a.totalTitulos
+        // );
+
+        const ranking = await tituloRepo.createQueryBuilder('titulo')
+            .innerJoin('titulo.user', 'usuario') // Usa a relação 'user' que está na entidade Titulo
+            .select([
+                'usuario.id AS id',
+                'usuario.username AS username',
+                'usuario.avatar AS avatar'
+            ])
+            .addSelect('COUNT(titulo.id)', 'totalTitulos')
+            .groupBy('usuario.id')
+            .orderBy('totalTitulos', 'DESC')
+            .limit(5)
+            .getRawMany();
+
+
+        return res.json(
+            ranking
+        );
+
+    } catch (error) {
+
+        console.log(error);
+
+        return res.status(500).json({
+            message: 'Erro ao gerar ranking'
+        });
+
+    }
+});
+
+app.get('/admin/users', verifyBearer, verifyAdmin, async (req, res) => {
+    try {
+
+        const usuarios = await usuarioRepo.find({
+            select: {
+                id: true,
+                email: true,
+                username: true,
+                avatar: true,
+                created_at: true
+            },
+            order: {
+                created_at: 'DESC'
+            }
+        });
+
+        return res.json(usuarios);
+
+    } catch (error) {
+
+        console.log(error);
+
+        return res.status(500).json({
+            message: 'Erro ao listar usuários'
+        });
+    }
+});
+
+app.get('/admin/users/:id', verifyBearer, verifyAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const user = await usuarioRepo.findOne({
+            where: { id },
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                message: 'Usuário não encontrado'
+            });
+        }
+
+        const titulos = await tituloRepo.find({
+            where: {
+                user: { id: user.id }
+            },
+            relations: {
+                type: true
+            }
+        });
+
+        const totalTitulos = titulos.length;
+
+        // ======================
+        // CONTAGEM POR TIPO
+        // ======================
+        const filmes = titulos.filter(t => t.type?.id === 1).length;
+        const series = titulos.filter(t => t.type?.id === 2).length;
+        const animes = titulos.filter(t => t.type?.id === 3).length;
+
+        // ======================
+        // GÊNEROS POR TIPO
+        // ======================
+        const generos = {
+            filmes: {},
+            series: {},
+            animes: {}
+        };
+
+        titulos.forEach(t => {
+            const tipo = t.type?.id;
+            const genero = t.genre?.trim();
+
+            if (!tipo || !genero) return;
+
+            if (tipo === 1) {
+                generos.filmes[genero] = (generos.filmes[genero] || 0) + 1;
+            }
+
+            if (tipo === 2) {
+                generos.series[genero] = (generos.series[genero] || 0) + 1;
+            }
+
+            if (tipo === 3) {
+                generos.animes[genero] = (generos.animes[genero] || 0) + 1;
+            }
+        });
+
+        // ======================
+        // FUNÇÃO TOP GÊNERO
+        // ======================
+        function getTop(obj) {
+            let top = 'Nenhum';
+            let max = 0;
+
+            Object.entries(obj).forEach(([g, qtd]) => {
+                if (qtd > max) {
+                    max = qtd;
+                    top = g;
+                }
+            });
+
+            return top;
+        }
+
+        // ======================
+        // ÚLTIMOS TÍTULOS
+        // ======================
+        const ultimosTitulos = titulos
+            .slice()
+            .reverse()
+            .slice(0, 5);
+
+        // ======================
+        // TEMPO INATIVO
+        // ======================
+        function getTempoInativo(data) {
+            if (!data) return 'Nunca acessou';
+
+            const diffMs = Date.now() - new Date(data).getTime();
+
+            const minutos = Math.floor(diffMs / 60000);
+            const horas = Math.floor(minutos / 60);
+            const dias = Math.floor(horas / 24);
+
+            if (dias > 0) return `${dias} dia(s)`;
+            if (horas > 0) return `${horas} hora(s)`;
+            if (minutos > 0) return `${minutos} min`;
+
+            return 'Agora mesmo';
+        }
+
+
+        return res.json({
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                avatar: user.avatar,
+                created_at: user.created_at,
+                last_activity: user.last_activity,
+            },
+
+            tempoInativo: getTempoInativo(user.last_activity),
+
+            totalTitulos,
+            filmes: filmes.length,
+            series: series.length,
+            animes: animes.length,
+
+            generoFavoritoFilmes: getTop(generos.filmes),
+            generoFavoritoSeries: getTop(generos.series),
+            generoFavoritoAnimes: getTop(generos.animes),
+
+            ultimosTitulos
+        });
+
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({
+            message: 'Erro ao buscar usuário'
+        });
+    }
+});
+
+app.delete('/admin/users/:id', verifyBearer, verifyAdmin, async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        const user = await usuarioRepo.findOneBy({ id: userId });
+
+        if (!user) {
+            return res.status(404).json({ message: 'Usuário não encontrado' });
+        }
+
+        // deletar títulos primeiro
+        await tituloRepo.delete({
+            user: { id: userId }
+        });
+
+        // deletar usuário
+        const result = await usuarioRepo.delete(userId);
+
+        console.log('DELETE RESULT:', result);
+
+        return res.status(200).json({
+            message: 'Conta deletada com sucesso'
+        });
+
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({
+            message: 'Erro ao deletar conta'
+        });
+    }
+});
 
 app.listen({ port: 3001, host: '0.0.0.0' }, () => console.log(`Assistidos rodando na porta 3001 acesse por http://localhost:3001`))
 

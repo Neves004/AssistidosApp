@@ -11,6 +11,7 @@ import { getToken } from "@/api/auth";
 import { useTheme } from "@/context/ThemeContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ASSISTIDOS_API } from "@/api/assistidos";
+import { pegarTitulos } from "@/api/endpoints";
 
 // type tmdbType = {
 //     poster_path: string;
@@ -40,6 +41,17 @@ export default function Home() {
 
         return () => clearTimeout(timer);
     }, [query, filterType, sortBy]);
+
+    const pegarTitulosAquiNaPorraDaTela = () => {
+        pegarTitulos().then((v) => {
+            setCards(v);
+        })
+    }
+
+    useEffect(() => {
+        pegarTitulosAquiNaPorraDaTela();
+    }, []);
+
 
 
     // async function buscarPosters(query: string) {
@@ -85,6 +97,9 @@ export default function Home() {
     };
     type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
     const navigation = useNavigation<NavigationProp>();
+
+    navigation.addListener('focus', () => pegarTitulosAquiNaPorraDaTela())
+
 
     async function carregarTitulos() {
         const res = await fetch(

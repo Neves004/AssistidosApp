@@ -15,7 +15,7 @@ import { ASSISTIDOS_API } from "@/api/assistidos";
 
 export default function Profile() {
     const { tema } = useTheme();
-    const [user, setUser] = useState<User | null>(null);
+    const [user, saveUser] = useState<User | null>(null);
     const [perfil, setPerfil] = useState<Perfil | null>(null);
 
     //Variáveis a serem carregadas dos títulos
@@ -71,7 +71,7 @@ export default function Profile() {
         ]);
 
         if (useer) {
-            setUser(JSON.parse(useer) as User);
+            saveUser(JSON.parse(useer) as User);
         }
 
         if (dados) {

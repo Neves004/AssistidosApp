@@ -9,7 +9,7 @@ import { useTheme } from "@/context/ThemeContext";
 
 import * as ImagePicker from 'expo-image-picker';
 import { atualizarAvatar, atualizarUsername, limparDados } from "@/api/endpoints";
-import { getUser, setUser, setToken, logout } from "@/api/auth";
+import { getUser, saveUser, setToken, logout } from "@/api/auth";
 import { AppModal } from "@/components/AppModal";
 import { Alert, TextInput } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -62,7 +62,7 @@ export default function Settings() {
                 if (userString) {
                     const user = JSON.parse(userString);
                     user.avatar = res.avatar;
-                    await setUser(JSON.stringify(user));
+                    await saveUser(JSON.stringify(user));
                 }
             }
 
@@ -90,7 +90,7 @@ export default function Settings() {
 
                 user.username = newUsername.trim();
 
-                await setUser(JSON.stringify(user));
+                await saveUser(JSON.stringify(user));
             }
 
             Alert.alert(
@@ -133,7 +133,7 @@ export default function Settings() {
         await AsyncStorage.removeItem('user');
 
         await setToken('');
-        await setUser('');
+        await saveUser('');
 
         setSigned(false);
     };

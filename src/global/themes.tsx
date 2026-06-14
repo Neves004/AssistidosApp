@@ -16,6 +16,7 @@ export type User = {
         username: string;
         email: string;
         avatar?: string;
+        role: 'user' | 'superadmin';
 }
 
 export type Perfil = {

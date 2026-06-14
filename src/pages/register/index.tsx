@@ -15,7 +15,7 @@ export default function Register() {
 
     const navigation = useNavigation<NavigationProp<any>>();
 
-    const [user, setUser] = useState('');
+    const [user, saveUser] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -89,7 +89,7 @@ export default function Register() {
 
                 <Input
                     value={user}
-                    onChangeText={setUser}
+                    onChangeText={saveUser}
                     title='NOME DE USUÁRIO:'
                     IconRight={FontAwesome}
                     IconRightName='user'
