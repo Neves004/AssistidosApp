@@ -12,11 +12,11 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { Alert } from 'react-native';
 import { TipoMidia } from '@/global/themes';
 import { MediaTypeSelector } from '@/components/MediaTypeSelector';
-import { v4 as uuidv4 } from 'uuid';
-import { useCards } from '@/context/cards.context';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { atualizarTitulo, registrarTitulo } from '@/api/endpoints';
+import { atualizarTitulo, getPosters, registrarTitulo } from '@/api/endpoints';
 import { useTheme } from '@/context/ThemeContext';
+import { PosterPicker } from '@/components/PosterPicker';
+import { themes } from '@/global/themes';
 
 type RootStackParamList = {
 
@@ -51,6 +51,17 @@ export default function NewTitle() {
             editItem?.tipo || { id: 1, name: 'Filme' }
         );
     const navigation = useNavigation<NavigationProp>();
+
+    const [isPickingImages, setIsPickingImages] = useState(false);
+
+    const [pickerImages, setPickerImages] = useState([]);
+
+    const openPickerModal = async () => {
+        const posters = await getPosters(title);
+        console.log(posters)
+        setPickerImages(posters);
+        setIsPickingImages(true);
+    }
 
     async function pickImage() {
         const permission =
@@ -249,13 +260,17 @@ export default function NewTitle() {
                         <Text style={styles.texts}> Capa do Título: </Text>
 
                         {/* IDEIA INICIAL - Imagens da Galeria */}
-                        <View style={{ marginTop: 10, marginBottom: 15 }}>
+                        <View style={{ marginTop: 10, marginBottom: 8 }}>
                             <ImagePickerCard
                                 image={image}
                                 onPress={pickImage}
                             />
 
                         </View>
+
+                        <TouchableOpacity activeOpacity={0.7} style={[styles.buttonAdd, { backgroundColor: tema, width:'100%', borderRadius:7, marginVertical:16 }]} onPress={openPickerModal}>
+                            <Text style={{color: themes.text, fontSize:18, fontWeight:'bold'}}>Pesquisar capa no The Movie DB</Text>
+                        </TouchableOpacity>
 
                         <TouchableOpacity activeOpacity={0.7} style={[styles.buttonAdd, { backgroundColor: tema }]} onPress={handleAdd} >
                             <MaterialIcons
@@ -272,6 +287,7 @@ export default function NewTitle() {
                     </View>
 
                 </ScrollView>
+                <PosterPicker visible={isPickingImages} images={pickerImages} onClose={() => {setIsPickingImages(false)}} onSelectImage={(url) => {setImage(url)}} />
             </SafeAreaView >
         </KeyboardAvoidingView>
 

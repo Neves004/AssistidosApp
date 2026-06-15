@@ -21,11 +21,6 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
     },
 
-    buttonActive: {
-        backgroundColor: themes.tema,
-        borderColor: themes.tema,
-    },
-
     text: {
         color: '#9ca3af',
         fontWeight: '600',

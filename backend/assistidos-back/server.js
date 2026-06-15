@@ -356,7 +356,7 @@ app.get('/titulos/:query', verifyBearer, async (req, res) => {
     const result = await tituloRepo.find({
         relations: { 'user': true, 'type': true }, where: [
             { 'user': req.user.id, titleName: Like(`%${query}%`) },
-            { 'user': req.user.id, note: Like(`%${query}%`) },
+            { 'user': req.user.id, note: (`%${query}%`) },
             { 'user': req.user.id, genre: Like(`%${query}%`) },
             { 'user': req.user.id, startDate: Like(`%${query}%`) },
             { 'user': req.user.id, endDate: Like(`%${query}%`) },
@@ -408,9 +408,15 @@ app.put('/user', verifyBearer, async (req, res) => {
 
 //Pegando informações dos títulos para o perfil 
 app.get('/perfil', verifyBearer, async (req, res) => {
-    const titulos = await tituloRepo.find({
-        relations: { type: true }, where: { user: req.user.id }
-    });
+
+    const titulos = await tituloRepo.createQueryBuilder('t')
+    .leftJoinAndSelect('t.type', 'type')
+    .leftJoinAndSelect('t.user', 'user')
+    .where('user.id='+req.user.id).getMany();
+
+    console.log(titulos)
+    console.log(req.user)
+    console.log(req.user.id)
 
     // Filtra apenas os títulos cujo tipo é "filme"
     const filmes = titulos.filter(
@@ -715,37 +721,6 @@ app.get('/admin/dashboard', verifyBearer, verifyAdmin, async (req, res) => {
 
 app.get('/admin/top-users', verifyBearer, verifyAdmin, async (req, res) => {
     try {
-        // const usuarios = await usuarioRepo.find();
-
-        // const ranking = [];
-
-        // for (const usuario of usuarios) {
-
-        //     const quantidadeTitulos = await tituloRepo.count({
-        //         relations: {
-        //             user: true
-        //         },
-        //         where: {
-        //             user: {
-        //                 id: usuario.id
-        //             }
-        //         },
-        //         'order': 'DESC',
-        //         'take': 5
-        //     });
-
-        //     ranking.push({
-        //         id: usuario.id,
-        //         username: usuario.username,
-        //         avatar: usuario.avatar,
-        //         totalTitulos: quantidadeTitulos
-        //     });
-        // }
-
-        // ranking.sort(
-        //     (a, b) => b.totalTitulos - a.totalTitulos
-        // );
-
         const ranking = await tituloRepo.createQueryBuilder('titulo')
             .innerJoin('titulo.user', 'usuario') // Usa a relação 'user' que está na entidade Titulo
             .select([
@@ -784,11 +759,13 @@ app.get('/admin/users', verifyBearer, verifyAdmin, async (req, res) => {
                 email: true,
                 username: true,
                 avatar: true,
-                created_at: true
+                created_at: true,
+                role: true,
             },
             order: {
                 created_at: 'DESC'
-            }
+            },
+            'where': {'role': 'user'}
         });
 
         return res.json(usuarios);
@@ -921,9 +898,9 @@ app.get('/admin/users/:id', verifyBearer, verifyAdmin, async (req, res) => {
             tempoInativo: getTempoInativo(user.last_activity),
 
             totalTitulos,
-            filmes: filmes.length,
-            series: series.length,
-            animes: animes.length,
+            filmes: filmes??0,
+            series: series??0,
+            animes: animes??0,
 
             generoFavoritoFilmes: getTop(generos.filmes),
             generoFavoritoSeries: getTop(generos.series),
@@ -973,6 +950,43 @@ app.delete('/admin/users/:id', verifyBearer, verifyAdmin, async (req, res) => {
         });
     }
 });
+
+app.get('/cover/:name', verifyBearer, async (req, res) => {
+    const tmdbKey = process.env.TMDB_SECRET;
+    const name = req.params.name;
+
+    const responseMovie = await fetch('https://api.themoviedb.org/3/search/movie?query='+name,
+        {
+            headers: {
+                'Authorization': 'Bearer ' + tmdbKey
+            }
+        }
+    );
+
+    const responseTv = await fetch('https://api.themoviedb.org/3/search/tv?query='+name,
+        {
+            headers: {
+                'Authorization': 'Bearer ' + tmdbKey
+            }
+        }
+    );
+
+    const results = await responseMovie.json();
+    const resultsTV = await responseTv.json();
+
+    const covers = []
+
+    results.results.forEach((v, i) => {
+        covers.push({path: `https://image.tmdb.org/t/p/w500${v.poster_path}`})
+    })
+    resultsTV.results.forEach((v, i) => {
+        covers.push({path: `https://image.tmdb.org/t/p/w500${v.poster_path}`})
+    })
+
+    res.status(200).json(covers);
+
+
+})
 
 app.listen({ port: 3001, host: '0.0.0.0' }, () => console.log(`Assistidos rodando na porta 3001 acesse por http://localhost:3001`))
 

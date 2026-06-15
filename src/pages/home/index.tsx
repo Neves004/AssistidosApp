@@ -13,10 +13,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ASSISTIDOS_API } from "@/api/assistidos";
 import { pegarTitulos } from "@/api/endpoints";
 
-// type tmdbType = {
-//     poster_path: string;
-// }
-
 export default function Home() {
     const { tema } = useTheme();
     const [open, setOpen] = useState<boolean>(false);
@@ -51,41 +47,6 @@ export default function Home() {
     useEffect(() => {
         pegarTitulosAquiNaPorraDaTela();
     }, []);
-
-
-
-    // async function buscarPosters(query: string) {
-    //     const apiKey = ; // Substitua pela sua chave do TMDB
-    //     const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}`;
-
-    //     const options = {
-    //         method: 'GET',
-    //         headers: {
-    //             accept: 'application/json',
-    //             Authorization: `Bearer ${apiKey}`
-    //         }
-
-    //     };
-
-    //     try {
-    //         const response = await fetch(url, options);
-    //         if (!response.ok) {
-    //             throw new Error(`Erro na requisição: ${response.status}`);
-    //         }
-    //         const data = await response.json();
-
-
-    //         // Filtramos apenas os filmes que possuem poster e mapeamos para a URL completa
-    //         const posters = (data.results as tmdbType[])
-    //             .filter(movie => movie.poster_path !== null)
-    //             .map(movie => `https://image.tmdb.org/t/p/w500${movie.poster_path}`);
-
-    //         return posters;
-    //     } catch (error) {
-    //         console.error("Erro ao buscar filmes:", error);
-    //         return [];
-    //     }
-    // }
 
     //Rota pra tela NewTitle
     type RootStackParamList = {

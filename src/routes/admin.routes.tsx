@@ -52,7 +52,7 @@ export default function AdminRoutes() {
                 component={SettingsAdmin}
                 options={{
                     tabBarIcon: ({ color, size }) => (
-                        <MaterialIcons name="settings" size={size} color={color} />
+                        <MaterialIcons name="logout" size={size} color={color} />
                     ),
                 }}
             />

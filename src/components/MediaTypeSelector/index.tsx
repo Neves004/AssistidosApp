@@ -5,6 +5,7 @@ import { styles } from '@/components/MediaTypeSelector/styles';
 import { TipoMidia } from '@/global/themes';
 import { useEffect, useState } from 'react';
 import { chamarTipos } from '@/api/endpoints';
+import { useTheme } from '@/context/ThemeContext';
 
 type Props = {
     value: TipoMidia;
@@ -24,6 +25,8 @@ export function MediaTypeSelector({
         })
     }, [])
 
+    const tema = useTheme()
+
     return (
 
         <View style={styles.container}>
@@ -34,7 +37,7 @@ export function MediaTypeSelector({
                     style={[
                         styles.button,
                         value.name === tipo.name &&
-                        styles.buttonActive
+                        {backgroundColor:tema.tema, borderColor:tema.tema}
                     ]}
                     onPress={() => onChange(tipo)}
                 >
@@ -50,8 +53,6 @@ export function MediaTypeSelector({
                     </Text>
                 </TouchableOpacity>
             })}
-
-
 
         </View>
     )

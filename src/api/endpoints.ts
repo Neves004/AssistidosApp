@@ -310,8 +310,7 @@ async function getUsers() {
 }
 
 async function getUserDetails(id: number) {
-    const endpoint =
-        ASSISTIDOS_API.base_url + `admin/users/${id}`;
+    const endpoint = ASSISTIDOS_API.base_url + `admin/users/${id}`;
 
     const res = await fetch(endpoint, {
         method: 'GET',
@@ -321,6 +320,8 @@ async function getUserDetails(id: number) {
     });
 
     const j = await res.json();
+
+    console.log(j);
 
     if (!res.ok) {
         throw new Error(j.message);
@@ -341,10 +342,26 @@ async function deleteAccount(id: number) {
 
     const j = await res.json();
 
-    console.log('DELETE RESPONSE:', res.status, j);
-
     if (!res.ok) {
         throw new Error(j.message || 'Erro ao deletar conta');
+    }
+    return j;
+}
+
+const getPosters = async (name: string) => {
+    const endpoint = ASSISTIDOS_API.base_url + 'cover/' + name;
+
+    const res = await fetch(endpoint, {
+        method: 'GET',
+        headers: {
+            Authorization: 'Bearer ' + await getToken(),
+        },
+    });
+
+    const j = await res.json();
+
+    if (!res.ok) {
+        throw new Error(j.message || 'Erro ao buscar capas');
     }
     return j;
 }
@@ -353,5 +370,5 @@ async function deleteAccount(id: number) {
 //Exportando as funções
 export {
     register, login, chamarTipos, registrarTitulo, atualizarTitulo, pegarTitulos, apagarTitulo, pesquisarTitulo, pegarPerfil,
-    atualizarAvatar, atualizarUsername, limparDados, getDashboard, getTopUsuarios, getUsers, getUserDetails, deleteAccount
+    atualizarAvatar, atualizarUsername, limparDados, getDashboard, getTopUsuarios, getUsers, getUserDetails, deleteAccount, getPosters
 }

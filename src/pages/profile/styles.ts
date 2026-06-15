@@ -73,11 +73,21 @@ export const styles = StyleSheet.create({
         borderRadius: 8
     },
 
+    capaNull: {
+        backgroundColor: themes.tema,
+        height: 150,
+        width: 100,
+        alignSelf: 'center',
+        marginTop: 10,
+        borderRadius: 8
+    },
+
     tituloText: {
         color: themes.text,
         fontSize: 12,
         alignSelf: 'center',
         marginTop: 2,
+        textAlign:'center'
     },
 
     title2: {
@@ -101,7 +111,7 @@ export const styles = StyleSheet.create({
         textAlignVertical: 'center',
         marginTop: 10,
         marginBottom: 10,
-        textAlign:'auto'
+        textAlign: 'auto'
     },
 
     text: {

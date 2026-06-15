@@ -121,7 +121,9 @@ export default function Profile() {
                                         source={{ uri: `${ASSISTIDOS_API.base_url}${ultimoFilme?.image}` }}
                                         style={styles.capa}
                                     />
-                                )}
+                                ) || (
+                                        <View style={[styles.capaNull, { backgroundColor: tema, opacity: 0.5 }]} />
+                                    )}
                                 <Text style={styles.tituloText}> {nomeUltimoFilme} </Text>
                                 <Text style={styles.tituloText}> {dataUltimoFilme}</Text>
 
@@ -134,7 +136,9 @@ export default function Profile() {
                                         source={{ uri: `${ASSISTIDOS_API.base_url}${ultimaSerie?.image}` }}
                                         style={styles.capa}
                                     />
-                                )}
+                                ) || (
+                                        <View style={[styles.capaNull, { backgroundColor: tema, opacity: 0.5 }]} />
+                                    )}
                                 <Text style={styles.tituloText}> {nomeUltimaSerie}</Text>
                                 <Text style={styles.tituloText}> {dataUltimaSerie}</Text>
 
@@ -147,7 +151,9 @@ export default function Profile() {
                                         source={{ uri: `${ASSISTIDOS_API.base_url}${ultimoAnime?.image}` }}
                                         style={styles.capa}
                                     />
-                                )}
+                                ) || (
+                                        <View style={[styles.capaNull, { backgroundColor: tema, opacity: 0.5 }]} />
+                                    )}
                                 <Text style={styles.tituloText}> {nomeUltimoAnime}</Text>
                                 <Text style={styles.tituloText}> {dataUltimoAnime}</Text>
 

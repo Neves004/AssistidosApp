@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '@/context/auth.context';
 
@@ -19,9 +19,7 @@ export default function SettingsAdmin() {
 
 
     return (
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-            <Text>Configurações do Superadmin</Text>
-
+        <View style={styles.container}>
             <TouchableOpacity
                 onPress={handleLogout}
                 style={{
@@ -36,3 +34,15 @@ export default function SettingsAdmin() {
         </View>
     );
 }
+
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: '#0f172a',
+        paddingHorizontal: 20,
+        paddingTop: 20,
+    },
+})

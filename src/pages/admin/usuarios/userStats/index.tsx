@@ -98,13 +98,13 @@ export default function UserStats({ route }: any) {
                     <Text style={styles.cardTitle}>Estatísticas</Text>
 
                     <View style={styles.row}>
-                        <Text style={styles.stat}>Filmes: {data.filmes}</Text>
-                        <Text style={styles.stat}>Séries: {data.series}</Text>
+                        <Text style={styles.value}>Filmes: {data.filmes}</Text>
+                        <Text style={styles.value}>Séries: {data.series}</Text>
                     </View>
 
                     <View style={styles.row}>
-                        <Text style={styles.stat}>Animes: {data.animes}</Text>
-                        <Text style={styles.stat}>Total: {data.totalTitulos}</Text>
+                        <Text style={styles.value}>Animes: {data.animes}</Text>
+                        <Text style={styles.value}>Total: {data.totalTitulos}</Text>
                     </View>
                 </View>
 
@@ -228,10 +228,6 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-    },
-
-    stat: {
-        color: '#d1d5db',
     },
 
     value: {

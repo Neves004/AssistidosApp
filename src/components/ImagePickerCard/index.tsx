@@ -34,7 +34,7 @@ export function ImagePickerCard({
                             source={{
                                 uri: image.startsWith('file')
                                     ? image
-                                    : `${ASSISTIDOS_API.base_url}${image}`
+                                    : image.startsWith('https') ? image : `${ASSISTIDOS_API.base_url}${image}`
                             }}
                             style={styles.image}
                         />
